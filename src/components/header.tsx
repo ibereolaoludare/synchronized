@@ -7,7 +7,7 @@ export default function Header() {
     return (
         <SlidingMenuProvider>
             <nav className="p-8 flex flex-col relative z-[40] bg-background">
-                <div className="flex">
+                <div className="flex items-center">
                     <div className="lg:hidden">
                         <SlidingMenuTrigger />
                     </div>
