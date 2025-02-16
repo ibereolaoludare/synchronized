@@ -41,10 +41,11 @@ export default function ShopItem({ title, image, price, id }: Props) {
             <Dialog>
                 <DialogTrigger onMouseDown={() => setSelectedSize(undefined)}>
                     <div className="dialog-trigger text-xs flex flex-col items-center p-4 gap-2 cursor-pointer hover:bg-white hover:text-background duration-300 transition-colors border-slate-300">
-                        <h1 className="uppercase w-full text-center flex items-center justify-center gap-2">
+                        <h1 className="uppercase w-full text-center flex items-center justify-center shrink-0 gap-2 text-[.65rem]">
                             <ArrowUpRightBit
                                 height={16}
                                 width={16}
+                                className="max-md:hidden"
                             />
                             <span>{title}</span>
                         </h1>
@@ -131,8 +132,8 @@ export default function ShopItem({ title, image, price, id }: Props) {
                                             size: selectedSize,
                                         }}
                                     />
-                                    <Button className="uppercase text-xs w-full bg-orange-500 border-none rounded-none text-black hover:bg-orange-500/80">
-                                        BUY
+                                    <Button className="uppercase text-xs w-full bg-transparent border rounded-none hover:text-black text-white hover:bg-white">
+                                        BUY NOW
                                     </Button>
                                 </div>
                             </div>

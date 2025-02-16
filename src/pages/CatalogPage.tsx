@@ -1,16 +1,25 @@
+import {
+    Category,
+    CategoryBody,
+    CategoryContent,
+    CategoryHeader,
+    CategoryTitle,
+} from "@/components/category";
+import Header from "@/components/header";
 import ShopItem from "@/components/shop-item";
-import Header from "../components/header";
-import { Toaster } from "sonner";
 import SocialSidebar from "@/components/social-sidebar";
-import { Category, CategoryBody, CategoryContent } from "@/components/category";
+import { Toaster } from "sonner";
 
-export default function HomePage() {
+export default function CatalogPage() {
     return (
         <>
             <Header />
             <SocialSidebar />
             <Category>
                 <CategoryContent>
+                    <CategoryHeader>
+                        <CategoryTitle>Shirts</CategoryTitle>
+                    </CategoryHeader>
                     <CategoryBody>
                         <ShopItem
                             image="/assets/images/white-shirt.png"
@@ -30,17 +39,17 @@ export default function HomePage() {
                             id={2}
                             price={20}
                         />
+                        <Toaster
+                            position="top-left"
+                            toastOptions={{
+                                style: {
+                                    borderRadius: 0,
+                                    fontSize: "10px",
+                                },
+                            }}
+                        />
                     </CategoryBody>
                 </CategoryContent>
-                <Toaster
-                    position="top-left"
-                    toastOptions={{
-                        style: {
-                            borderRadius: 0,
-                            fontSize: "10px",
-                        },
-                    }}
-                />
             </Category>
         </>
     );

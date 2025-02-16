@@ -1,15 +1,19 @@
+import { cn } from "@/lib/utils";
+
 interface Props {
     color? : string;
     width : number;
     height : number;
+    className?: string;
 }
 
-export default function ArrowUpRightBit({color, width, height} : Props) {
+export default function ArrowUpRightBit({color, width, height, className} : Props) {
     return (
         <svg
             width={width}
             height={height}
             viewBox="0 0 64 64"
+            className={cn("shrink-0", className)}
             fill="none"
             color={color}
             >

@@ -23,6 +23,21 @@ import {
     ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { updateCartData } from "@/lib/utils";
+import { TextAnimate } from "./magicui/text-animate";
+import { motion } from "framer-motion";
+import { Separator } from "./ui/separator";
+import ArrowRight from "./arrow-right";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+  } from "@/components/ui/alert-dialog"  
+
 
 interface CartItem {
     title: string;
@@ -35,36 +50,46 @@ interface CartItem {
 
 export default function CartDrawer() {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
+    const [removingItem, setRemovingItem] = useState<number | null>(null);
 
-    // Function to read cart data from localStorage
+    // Read cart data from localStorage
     const readCartData = (): CartItem[] => {
         const cartDataString = localStorage.getItem("cart-data");
         return cartDataString ? JSON.parse(cartDataString) : [];
     };
 
-    // Function to delete an item from the cart
+    // Handle single item deletion with animation
     const handleDeleteItem = (id: number) => {
-        const updatedCartItems = cartItems.filter((item) => item.id !== id);
-        setCartItems(updatedCartItems);
-        localStorage.setItem("cart-data", JSON.stringify(updatedCartItems));
-
-        // Dispatch a custom event to notify other components
-        updateCartData();
+        setRemovingItem(id);
+        setTimeout(() => {
+            const updatedCartItems = cartItems.filter((item) => item.id !== id);
+            setCartItems(updatedCartItems);
+            localStorage.setItem("cart-data", JSON.stringify(updatedCartItems));
+            updateCartData();
+            setRemovingItem(null);
+        }, 600); // Matches animation duration
     };
 
-    // Update cartItems state whenever localStorage changes
+    // Handle full cart deletion with animation
+    const handleDeleteAll = () => {
+        setRemovingItem(-1); // -1 represents "all items"
+        setTimeout(() => {
+            setCartItems([]);
+            localStorage.setItem("cart-data", JSON.stringify([]));
+            updateCartData();
+            setRemovingItem(null);
+        }, 600); // Matches animation duration
+    };
+
+    // Sync cart state with localStorage updates
     useEffect(() => {
         const handleCartUpdate = () => {
             setCartItems(readCartData());
         };
 
-        // Listen for custom event
         window.addEventListener("cart-data-updated", handleCartUpdate);
-
-        // Initial read of cart data
         setCartItems(readCartData());
 
-        // Cleanup event listener
         return () => {
             window.removeEventListener("cart-data-updated", handleCartUpdate);
         };
@@ -72,15 +97,15 @@ export default function CartDrawer() {
 
     return (
         <Drawer>
-            <DrawerTrigger>
-                <Button className="flex justify-end bg-transparent hover:bg-transparent/0 hover:[&>*]:opacity-50 [&>*]:duration-300">
+            <DrawerTrigger className="shrink-0">
+                <Button className="flex justify-end bg-transparent hover:bg-transparent/0 hover:[&>*]:opacity-50 [&>*]:duration-300 shrink-0">
                     <img
                         src="/assets/images/cart.png"
-                        className="h-8"
+                        className="h-8 w-8 shrink-0"
                     />
                 </Button>
             </DrawerTrigger>
-            <DrawerContent className="!rounded-none border-0 max-h-1/2 px-12 py-6">
+            <DrawerContent className="!rounded-none border-0 px-12 py-6">
                 <DrawerHeader className="flex justify-between items-center">
                     <DrawerTitle>Cart</DrawerTitle>
                     <DrawerClose>
@@ -91,30 +116,45 @@ export default function CartDrawer() {
                 </DrawerHeader>
                 <div>
                     <Table className="[&>*]:text-xs">
-                        <TableHeader>
-                            <TableRow className="hover:bg-white/0">
-                                <TableHead>Product</TableHead>
-                                <TableHead>Price</TableHead>
-                                <TableHead>Quantity</TableHead>
-                                <TableHead className="text-right">
-                                    Total
-                                </TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
+                        {cartItems.length > 0 && (
+                            <TableHeader>
+                                <TableRow className="hover:bg-white/0">
+                                    <TableHead>Product</TableHead>
+                                    <TableHead>Price</TableHead>
+                                    <TableHead>Quantity</TableHead>
+                                    <TableHead className="text-right">
+                                        Total
+                                    </TableHead>
+                                </TableRow>
+                            </TableHeader>
+                        )}
+                        <TableBody className="overflow-scroll ">
                             {cartItems.length === 0 ? (
                                 <TableRow className="hover:bg-black/0">
                                     <TableCell
                                         colSpan={4}
                                         className="text-center p-12">
-                                        Your cart is empty.
+                                        <TextAnimate>
+                                            Your cart is empty.
+                                        </TextAnimate>
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                cartItems.map((item, index) => (
-                                    <TableRow
-                                        key={index}
-                                        className="hover:bg-white/10">
+                                cartItems.map((item) => (
+                                    <motion.tr
+                                        key={item.id}
+                                        className="hover:bg-white/10"
+                                        initial={{ opacity: 1, height: "auto" }}
+                                        animate={
+                                            removingItem === item.id ||
+                                            removingItem === -1
+                                                ? { opacity: 0, height: 0 }
+                                                : {}
+                                        }
+                                        transition={{
+                                            duration: 0.6,
+                                            ease: "easeInOut",
+                                        }}>
                                         <TableCell>
                                             <ContextMenu>
                                                 <ContextMenuTrigger>
@@ -153,12 +193,43 @@ export default function CartDrawer() {
                                                 item.price * item.quantity
                                             ).toFixed(2)}
                                         </TableCell>
-                                    </TableRow>
+                                    </motion.tr>
                                 ))
                             )}
                         </TableBody>
                     </Table>
                 </div>
+                {cartItems.length > 0 && (
+                    <>
+                        <Separator className="bg-transparent py-4" />
+                        <div className="flex gap-8 justify-end items-center">
+                            <AlertDialog>
+                                <AlertDialogTrigger className="uppercase text-xs w-min h-10 px-4 text-nowrap bg-white text-red-500 border-none rounded-none hover:bg-white/80">
+                                    Delete all
+                                </AlertDialogTrigger>
+                                <AlertDialogContent className="!rounded-none border-0 p-12 gap-12">
+                                    <AlertDialogHeader className="[&>*]:text-xs">
+                                        <AlertDialogTitle>
+                                            Delete all cart items?
+                                        </AlertDialogTitle>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter className="[&>*]:text-xs gap-4">
+                                        <AlertDialogCancel className="uppercase text-xs w-min bg-white border-none rounded-none text-black hover:bg-white/80">
+                                            Cancel
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction onClick={handleDeleteAll} className="uppercase text-xs w-min text-nowrap bg-white text-red-500 border-none rounded-none hover:bg-white/80">
+                                            Delete
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+                            <Button className="uppercase text-xs w-min bg-white border-none rounded-none text-black hover:bg-white/80">
+                                Checkout
+                                <ArrowRight />
+                            </Button>
+                        </div>
+                    </>
+                )}
             </DrawerContent>
         </Drawer>
     );

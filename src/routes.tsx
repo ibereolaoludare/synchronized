@@ -10,5 +10,14 @@ export const router = createBrowserRouter([
             };
         },
         errorElement: <ErrorPage />,
+    },    {
+        path: "/catalog" ,
+        async lazy() {
+            const Catalog = (await import("./pages/CatalogPage.tsx")).default;
+            return {
+                Component: Catalog,
+            };
+        },
+        errorElement: <ErrorPage />,
     }
 ]);
