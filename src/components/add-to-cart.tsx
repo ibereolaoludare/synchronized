@@ -37,7 +37,7 @@ export default function AddToCart({ data }: Props) {
 
         // Check if the item already exists in the cart
         const isItemInCart = cartData.some(
-            (item) => item.title === data.title && item.size === data.size && item.id === data.id
+            (item) => item.title === data.title && item.size === data.size
         );
 
         if (!isItemInCart) {
@@ -59,7 +59,7 @@ export default function AddToCart({ data }: Props) {
     return (
         <Button
             onClick={() => handleClick(data)}
-            className="uppercase text-xs w-full bg-white border-none rounded-none text-black hover:bg-white/80 relative overflow-hidden">
+            className="uppercase text-xs w-full bg-white border-none rounded-none text-black hover:bg-white/80 relative overflow-hidden max-sm:text-[.65rem]">
             <motion.div
                 initial={{ opacity: 1 }}
                 animate={{ opacity: clicked ? 0 : 1 }}

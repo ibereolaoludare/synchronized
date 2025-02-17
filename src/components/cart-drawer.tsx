@@ -36,8 +36,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-  } from "@/components/ui/alert-dialog"  
-
+} from "@/components/ui/alert-dialog";
 
 interface CartItem {
     title: string;
@@ -107,7 +106,7 @@ export default function CartDrawer() {
             </DrawerTrigger>
             <DrawerContent className="!rounded-none border-0 px-12 py-6">
                 <DrawerHeader className="flex justify-between items-center">
-                    <DrawerTitle>Cart</DrawerTitle>
+                    <DrawerTitle className="max-sm:text-sm">Cart</DrawerTitle>
                     <DrawerClose>
                         <Button className="uppercase text-xs w-min bg-white border-none rounded-none text-black hover:bg-white/80">
                             X
@@ -165,8 +164,10 @@ export default function CartDrawer() {
                                                             className="h-20"
                                                         />
                                                         <span className="text-nowrap uppercase">
-                                                            {item.title} - Size:{" "}
-                                                            {item.size}
+                                                            {item.title}
+                                                            <br />
+                                                            <br />
+                                                            Size: {item.size}
                                                         </span>
                                                     </div>
                                                 </ContextMenuTrigger>
@@ -217,7 +218,9 @@ export default function CartDrawer() {
                                         <AlertDialogCancel className="uppercase text-xs w-min bg-white border-none rounded-none text-black hover:bg-white/80">
                                             Cancel
                                         </AlertDialogCancel>
-                                        <AlertDialogAction onClick={handleDeleteAll} className="uppercase text-xs w-min text-nowrap bg-white text-red-500 border-none rounded-none hover:bg-white/80">
+                                        <AlertDialogAction
+                                            onClick={handleDeleteAll}
+                                            className="uppercase text-xs w-min text-nowrap bg-white text-red-500 border-none rounded-none hover:bg-white/80">
                                             Delete
                                         </AlertDialogAction>
                                     </AlertDialogFooter>

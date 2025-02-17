@@ -33,13 +33,17 @@ export default function ShopItem({ title, image, price, id }: Props) {
     const [quantity, setQuantity] = useState(1);
 
     return (
-        <div className="aspect-square    gap-4 flex flex-col items-center justify-center [&>img]:hover:opacity-65 [&>*>.dialog-trigger]:hover:border">
+        <div className="aspect-square gap-4 flex flex-col items-center justify-center [&>img]:hover:opacity-65 [&>*>.dialog-trigger]:hover:outline">
             <img
                 src={image}
-                className="w-min duration-300 h-40"
+                className="max-h-40 duration-300"
             />
             <Dialog>
-                <DialogTrigger onMouseDown={() => setSelectedSize(undefined)}>
+                <DialogTrigger
+                    onMouseDown={() => {
+                        setSelectedSize(undefined);
+                        setQuantity(1);
+                    }}>
                     <div className="dialog-trigger text-xs flex flex-col items-center p-4 gap-2 cursor-pointer hover:bg-white hover:text-background duration-300 transition-colors border-slate-300">
                         <h1 className="uppercase w-full text-center flex items-center justify-center shrink-0 gap-2 text-[.65rem]">
                             <ArrowUpRightBit
@@ -57,12 +61,12 @@ export default function ShopItem({ title, image, price, id }: Props) {
                         <img
                             src={image}
                             alt={title}
-                            className="h-full"
+                            className="w-full"
                         />
                     </div>
                     <div className="flex flex-col w-1/2 h-full">
                         <div className="flex flex-col gap-20">
-                            <DialogHeader className="uppercase gap-4 text-xs">
+                            <DialogHeader className="uppercase gap-4 text-xs max-sm:text-left">
                                 <DialogTitle className="text-xs">
                                     {title}
                                 </DialogTitle>
@@ -75,14 +79,19 @@ export default function ShopItem({ title, image, price, id }: Props) {
                                     <div className="flex justify-items-center">
                                         <Button
                                             onClick={() =>
-                                                setQuantity((i) => (i = i > 1 ? i - 1 : 1))
+                                                setQuantity(
+                                                    (i) =>
+                                                        (i = i > 1 ? i - 1 : 1)
+                                                )
                                             }
                                             className="uppercase basis-1/3 text-xs w-full bg-white border-none rounded-none text-black hover:bg-white/80">
                                             -
                                         </Button>
                                         <div className="uppercase flex flex-col p-1 items-center text-center basis-1/3">
-                                            <h1 className="text-xs">qty:</h1>
-                                            <span className="text-xs">
+                                            <h1 className="text-xs max-sm:text-[.65rem]">
+                                                qty:
+                                            </h1>
+                                            <span className="text-xs max-sm:text-[.65rem]">
                                                 {quantity}
                                             </span>
                                         </div>
@@ -95,10 +104,10 @@ export default function ShopItem({ title, image, price, id }: Props) {
                                         </Button>
                                     </div>
                                     <Select>
-                                        <SelectTrigger className="w-full [&>*]:text-xs bg-black text-white rounded-none border border-white">
+                                        <SelectTrigger className="w-full [&>*]:text-xs max-sm:[&>*]:text-[.65rem] bg-black text-white rounded-none border border-white">
                                             <SelectValue placeholder="Size" />
                                         </SelectTrigger>
-                                        <SelectContent className="[&>*>*]:text-xs rounded-none">
+                                        <SelectContent className="[&>*>*]:text-xs  max-sm:[&>*>*]:text-[.65rem] rounded-none">
                                             <SelectItem
                                                 value="small"
                                                 onMouseDown={() => {
@@ -132,7 +141,7 @@ export default function ShopItem({ title, image, price, id }: Props) {
                                             size: selectedSize,
                                         }}
                                     />
-                                    <Button className="uppercase text-xs w-full bg-transparent border rounded-none hover:text-black text-white hover:bg-white">
+                                    <Button className="uppercase text-xs w-full bg-transparent border rounded-none hover:text-black text-white hover:bg-white max-sm:text-[.65rem]">
                                         BUY NOW
                                     </Button>
                                 </div>

@@ -109,3 +109,7 @@
 .font-p2s {
     font-family: "Press Start 2P";
 }
+
+.text-xxs{
+    @apply text-[.65rem]
+}
