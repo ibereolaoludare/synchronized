@@ -97,14 +97,14 @@ export default function CartDrawer() {
     return (
         <Drawer>
             <DrawerTrigger className="shrink-0">
-                <Button className="flex justify-end bg-transparent hover:bg-transparent/0 hover:[&>*]:opacity-50 [&>*]:duration-300 shrink-0">
+                <Button className="flex justify-end bg-transparent hover:bg-transparent/0 hover:[&>*]:opacity-50 [&>*]:duration-300 shrink-0 p-0">
                     <img
                         src="/assets/images/cart.png"
                         className="h-8 w-8 shrink-0"
                     />
                 </Button>
             </DrawerTrigger>
-            <DrawerContent className="!rounded-none border-0 px-12 py-6">
+            <DrawerContent className="!rounded-none border-0 px-24 max-lg:px-16 max-sm:px-8 py-6">
                 <DrawerHeader className="flex justify-between items-center">
                     <DrawerTitle className="max-sm:text-sm">Cart</DrawerTitle>
                     <DrawerClose>
@@ -157,13 +157,13 @@ export default function CartDrawer() {
                                         <TableCell>
                                             <ContextMenu>
                                                 <ContextMenuTrigger>
-                                                    <div className="flex gap-12">
+                                                    <div className="flex gap-12 max-lg:gap-8 max-md:gap-4 max-sm:gap-2">
                                                         <img
                                                             src={item.image}
                                                             alt={item.title}
                                                             className="h-20"
                                                         />
-                                                        <span className="text-nowrap uppercase">
+                                                        <span className="text-nowrap max-lg:text-wrap uppercase max-sm:text-[.65rem]">
                                                             {item.title}
                                                             <br />
                                                             <br />
@@ -184,11 +184,11 @@ export default function CartDrawer() {
                                                 </ContextMenuContent>
                                             </ContextMenu>
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell className=" max-sm:text-[.65rem]">
                                             ${item.price.toFixed(2)}
                                         </TableCell>
-                                        <TableCell>{item.quantity}</TableCell>
-                                        <TableCell className="text-right">
+                                        <TableCell className="max-sm:text-[.65rem]">{item.quantity}</TableCell>
+                                        <TableCell className="text-right max-sm:text-[.65rem]">
                                             $
                                             {(
                                                 item.price * item.quantity
@@ -203,9 +203,9 @@ export default function CartDrawer() {
                 {cartItems.length > 0 && (
                     <>
                         <Separator className="bg-transparent py-4" />
-                        <div className="flex gap-8 justify-end items-center">
+                        <div className="flex gap-8 justify-end items-center max-[450px]:justify-between">
                             <AlertDialog>
-                                <AlertDialogTrigger className="uppercase text-xs w-min h-10 px-4 text-nowrap bg-white text-red-500 border-none rounded-none hover:bg-white/80">
+                                <AlertDialogTrigger className="uppercase text-xs max-sm:text-[.65rem] w-min h-10 px-4 text-nowrap bg-white text-red-500 border-none rounded-none hover:bg-white/80">
                                     Delete all
                                 </AlertDialogTrigger>
                                 <AlertDialogContent className="!rounded-none border-0 p-12 gap-12">
@@ -226,7 +226,7 @@ export default function CartDrawer() {
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
                             </AlertDialog>
-                            <Button className="uppercase text-xs w-min bg-white border-none rounded-none text-black hover:bg-white/80">
+                            <Button className="uppercase text-xs max-sm:text-[.65rem] w-min bg-white border-none rounded-none text-black hover:bg-white/80">
                                 Checkout
                                 <ArrowRight />
                             </Button>

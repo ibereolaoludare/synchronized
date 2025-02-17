@@ -37,7 +37,7 @@ export default function AddToCart({ data }: Props) {
 
         // Check if the item already exists in the cart
         const isItemInCart = cartData.some(
-            (item) => item.title === data.title && item.size === data.size
+            (item) => item.id === data.id && item.size === data.size
         );
 
         if (!isItemInCart) {
@@ -49,6 +49,7 @@ export default function AddToCart({ data }: Props) {
             updateCartData();
         } else {
             toast.error("Item is already in the cart.");
+            return;
         }
 
         // Set clicked state for UI feedback

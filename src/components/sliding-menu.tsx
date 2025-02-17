@@ -109,7 +109,7 @@ const SlidingMenu: React.FC = () => {
                     transition={{ type: "tween", duration: 0.3 }}
                     className="w-full fixed bg-white border-b border-b-slate-300 z-30 lg:hidden">
                     <div className="flex flex-col items-end">
-                        <div className="w-full flex flex-col [&>*]:py-6 [&>*]:px-8 text-xs hover:[&>*]:bg-black/10 text-background font-bold">
+                        <div className="w-full flex flex-col [&>*]:py-6 [&>*]:px-24 max-lg:[&>*]:px-16 max-sm:[&>*]:px-8 text-xs hover:[&>*]:bg-black/10 text-background font-bold max-sm:text-[.65rem]">
                             <Link
                                 to="/"
                                 onClick={closeMenu}>

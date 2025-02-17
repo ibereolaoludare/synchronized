@@ -6,7 +6,7 @@ import { SlidingMenuProvider, SlidingMenuTrigger } from "./sliding-menu";
 export default function Header() {
     return (
         <SlidingMenuProvider>
-            <nav className="p-8 flex flex-col relative z-[40] bg-background">
+            <nav className="px-24 max-lg:px-16 max-sm:px-8 py-8 flex flex-col relative z-[40] bg-background">
                 <div className="flex items-center">
                     <div className="lg:hidden">
                         <SlidingMenuTrigger />

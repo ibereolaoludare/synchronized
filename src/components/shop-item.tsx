@@ -44,7 +44,7 @@ export default function ShopItem({ title, image, price, id }: Props) {
                         setSelectedSize(undefined);
                         setQuantity(1);
                     }}>
-                    <div className="dialog-trigger text-xs flex flex-col items-center p-4 gap-2 cursor-pointer hover:bg-white hover:text-background duration-300 transition-colors border-slate-300">
+                    <div className="dialog-trigger text-xs max-sm:text-[.65rem] flex flex-col items-center py-4 px-4 max-lg:px-3 max-sm:px-2 gap-2 cursor-pointer hover:bg-white hover:text-background duration-300 transition-colors border-slate-300">
                         <h1 className="uppercase w-full text-center flex items-center justify-center shrink-0 gap-2 text-[.65rem]">
                             <ArrowUpRightBit
                                 height={16}
@@ -56,7 +56,7 @@ export default function ShopItem({ title, image, price, id }: Props) {
                         <h2>${price}</h2>
                     </div>
                 </DialogTrigger>
-                <DialogContent className="!rounded-none border-0 p-12 flex justify-center max-w-[40rem] gap-12">
+                <DialogContent className="!rounded-none border-0 p-12 flex justify-center max-w-[40rem] gap-12 max-lg:px-16 max-sm:px-8">
                     <div className="flex items-center justify-center w-1/2">
                         <img
                             src={image}
@@ -66,11 +66,11 @@ export default function ShopItem({ title, image, price, id }: Props) {
                     </div>
                     <div className="flex flex-col w-1/2 h-full">
                         <div className="flex flex-col gap-20">
-                            <DialogHeader className="uppercase gap-4 text-xs max-sm:text-left">
-                                <DialogTitle className="text-xs">
+                            <DialogHeader className="uppercase gap-4 max-sm:text-left max-sm:text-[.65rem] flex flex-col">
+                                <DialogTitle className="text-xs max-sm:text-[.65rem]">
                                     {title}
                                 </DialogTitle>
-                                <h2 className="text-xs text-gray-300">
+                                <h2 className="text-xs max-sm:text-[.65rem] text-gray-300">
                                     ${price}
                                 </h2>
                             </DialogHeader>
