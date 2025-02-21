@@ -16,12 +16,6 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { useEffect, useState } from "react";
-import {
-    ContextMenu,
-    ContextMenuContent,
-    ContextMenuItem,
-    ContextMenuTrigger,
-} from "@/components/ui/context-menu";
 import { updateCartData } from "@/lib/utils";
 import { TextAnimate } from "./magicui/text-animate";
 import { motion } from "framer-motion";
@@ -50,14 +44,23 @@ interface CartItem {
 export default function CartDrawer() {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [removingItem, setRemovingItem] = useState<number | null>(null);
+    const [isMobile, setIsMobile] = useState<boolean>(false);
 
-    // Read cart data from localStorage
+    useEffect(() => {
+        const updateIsMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+
+        updateIsMobile();
+        window.addEventListener("resize", updateIsMobile);
+        return () => window.removeEventListener("resize", updateIsMobile);
+    }, []);
+
     const readCartData = (): CartItem[] => {
         const cartDataString = localStorage.getItem("cart-data");
         return cartDataString ? JSON.parse(cartDataString) : [];
     };
 
-    // Handle single item deletion with animation
     const handleDeleteItem = (id: number) => {
         setRemovingItem(id);
         setTimeout(() => {
@@ -66,29 +69,25 @@ export default function CartDrawer() {
             localStorage.setItem("cart-data", JSON.stringify(updatedCartItems));
             updateCartData();
             setRemovingItem(null);
-        }, 600); // Matches animation duration
+        }, 600);
     };
 
-    // Handle full cart deletion with animation
     const handleDeleteAll = () => {
-        setRemovingItem(-1); // -1 represents "all items"
+        setRemovingItem(-1);
         setTimeout(() => {
             setCartItems([]);
             localStorage.setItem("cart-data", JSON.stringify([]));
             updateCartData();
             setRemovingItem(null);
-        }, 600); // Matches animation duration
+        }, 600);
     };
 
-    // Sync cart state with localStorage updates
     useEffect(() => {
         const handleCartUpdate = () => {
             setCartItems(readCartData());
         };
-
         window.addEventListener("cart-data-updated", handleCartUpdate);
         setCartItems(readCartData());
-
         return () => {
             window.removeEventListener("cart-data-updated", handleCartUpdate);
         };
@@ -113,7 +112,71 @@ export default function CartDrawer() {
                         </Button>
                     </DrawerClose>
                 </DrawerHeader>
-                <div>
+                {isMobile ? (
+                    <div className="flex flex-col gap-4">
+                        {cartItems.length === 0 ? (
+                            <div className="p-12 items-center justify-center flex">
+                                <TextAnimate className="text-[0.65rem]">
+                                    Your cart is empty.
+                                </TextAnimate>
+                            </div>
+                        ) : (
+                            cartItems.map((item) => (
+                                <motion.div
+                                    key={item.id}
+                                    className="flex-col gap-4 items-center p-4 cursor-pointer hover:bg-white/10"
+                                    initial={{ opacity: 1, height: "auto" }}
+                                    animate={
+                                        removingItem === item.id ||
+                                        removingItem === -1
+                                            ? { opacity: 0, height: 0 }
+                                            : {}
+                                    }
+                                    transition={{
+                                        duration: 0.3,
+                                        ease: "easeInOut",
+                                    }}>
+                                    <div className="flex gap-4 h-max">
+                                        <img
+                                            src={item.image}
+                                            alt={item.title}
+                                            className="h-16"
+                                        />
+                                        <div className="flex flex-col h-full justify-between">
+                                            <div>
+                                                <p className="text-[.65rem] uppercase">
+                                                    {item.title} - {item.size}
+                                                </p>
+                                            </div>
+                                            <p className="text-[.65rem]">
+                                                Price: ${item.price.toFixed(2)}
+                                            </p>
+                                            <p className="text-[.65rem]">
+                                                Qty: {item.quantity}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="text-[.65rem] flex justify-between pt-4">
+                                        <div
+                                            className="text-red-500 hover:text-red-500/80"
+                                            onClick={() =>
+                                                handleDeleteItem(item.id)
+                                            }>
+                                            Delete
+                                        </div>
+                                        <div>
+                                            Total -{" "}
+                                            {"$" +
+                                                (
+                                                    item.price * item.quantity
+                                                ).toFixed(2)}
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))
+                        )}
+                    </div>
+                ) : (
                     <Table className="[&>*]:text-xs">
                         {cartItems.length > 0 && (
                             <TableHeader>
@@ -127,7 +190,7 @@ export default function CartDrawer() {
                                 </TableRow>
                             </TableHeader>
                         )}
-                        <TableBody className="overflow-scroll ">
+                        <TableBody className="overflow-scroll">
                             {cartItems.length === 0 ? (
                                 <TableRow className="hover:bg-black/0">
                                     <TableCell
@@ -142,7 +205,7 @@ export default function CartDrawer() {
                                 cartItems.map((item) => (
                                     <motion.tr
                                         key={item.id}
-                                        className="hover:bg-white/10"
+                                        className="hover:bg-white/10 h-min"
                                         initial={{ opacity: 1, height: "auto" }}
                                         animate={
                                             removingItem === item.id ||
@@ -151,43 +214,39 @@ export default function CartDrawer() {
                                                 : {}
                                         }
                                         transition={{
-                                            duration: 0.6,
+                                            duration: 0.3,
                                             ease: "easeInOut",
                                         }}>
                                         <TableCell>
-                                            <ContextMenu>
-                                                <ContextMenuTrigger>
-                                                    <div className="flex gap-12 max-lg:gap-8 max-md:gap-4 max-sm:gap-2">
-                                                        <img
-                                                            src={item.image}
-                                                            alt={item.title}
-                                                            className="h-20"
-                                                        />
-                                                        <span className="text-nowrap max-lg:text-wrap uppercase max-sm:text-[.65rem]">
-                                                            {item.title}
-                                                            <br />
-                                                            <br />
-                                                            Size: {item.size}
-                                                        </span>
-                                                    </div>
-                                                </ContextMenuTrigger>
-                                                <ContextMenuContent className="rounded-none">
-                                                    <ContextMenuItem
-                                                        className="text-xs text-red-500 focus:text-red-700/80"
+                                            <div className="flex gap-12 max-lg:gap-8 max-md:gap-4 max-sm:gap-2">
+                                                <img
+                                                    src={item.image}
+                                                    alt={item.title}
+                                                    className="h-20"
+                                                />
+                                                <div className="flex flex-col gap-3 text-nowrap max-lg:text-wrap uppercase max-sm:text-[.65rem]">
+                                                    <span>{item.title}</span>
+                                                    <span>
+                                                        Size: {item.size}
+                                                    </span>
+                                                    <div
+                                                        className="text-red-500 cursor-pointer hover:text-red-500/80"
                                                         onClick={() =>
                                                             handleDeleteItem(
                                                                 item.id
                                                             )
                                                         }>
                                                         Delete
-                                                    </ContextMenuItem>
-                                                </ContextMenuContent>
-                                            </ContextMenu>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </TableCell>
                                         <TableCell className=" max-sm:text-[.65rem]">
                                             ${item.price.toFixed(2)}
                                         </TableCell>
-                                        <TableCell className="max-sm:text-[.65rem]">{item.quantity}</TableCell>
+                                        <TableCell className="max-sm:text-[.65rem]">
+                                            {item.quantity}
+                                        </TableCell>
                                         <TableCell className="text-right max-sm:text-[.65rem]">
                                             $
                                             {(
@@ -199,11 +258,11 @@ export default function CartDrawer() {
                             )}
                         </TableBody>
                     </Table>
-                </div>
+                )}
                 {cartItems.length > 0 && (
                     <>
                         <Separator className="bg-transparent py-4" />
-                        <div className="flex gap-8 justify-end items-center max-[450px]:justify-between">
+                        <div className="flex sm:gap-8 justify-end items-center max-sm:justify-between">
                             <AlertDialog>
                                 <AlertDialogTrigger className="uppercase text-xs max-sm:text-[.65rem] w-min h-10 px-4 text-nowrap bg-white text-red-500 border-none rounded-none hover:bg-white/80">
                                     Delete all
