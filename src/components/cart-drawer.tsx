@@ -69,7 +69,7 @@ export default function CartDrawer() {
             localStorage.setItem("cart-data", JSON.stringify(updatedCartItems));
             updateCartData();
             setRemovingItem(null);
-        }, 600);
+        }, 300);
     };
 
     const handleDeleteAll = () => {

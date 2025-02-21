@@ -37,7 +37,7 @@ export default function AddToCart({ data }: Props) {
 
         // Check if the item already exists in the cart
         const isItemInCart = cartData.some(
-            (item) => item.id === data.id && item.size === data.size
+            (item) => item.id === data.id
         );
 
         if (!isItemInCart) {

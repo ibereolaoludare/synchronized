@@ -25,7 +25,7 @@ export default function Header() {
                         <TextAnimate by="character">Catalog</TextAnimate>
                     </Link>
                     <Link to={"/"}>
-                        <TextAnimate by="character">Contract</TextAnimate>
+                        <TextAnimate by="character">Contact</TextAnimate>
                     </Link>
                 </div>
             </nav>
