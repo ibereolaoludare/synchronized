@@ -156,7 +156,7 @@ export default function CartDrawer() {
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="text-[.65rem] flex justify-between pt-4">
+                                    <div className="text-[.65rem] items-end flex justify-between pt-4">
                                         <div
                                             className="text-red-500 hover:text-red-500/80"
                                             onClick={() =>
