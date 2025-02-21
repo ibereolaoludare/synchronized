@@ -20,10 +20,13 @@ export default function SocialSidebar() {
                         ease: "linear",
                         delay: index * 0.1, // Stagger effect
                     }}
-                    className="hover:[&>*]:opacity-50 [&>*]:duration-300"
-                >
-                    <Link to={icon.to} >
-                        <img className="h-8" src={icon.src} alt={icon.alt} />
+                    className="hover:[&>*]:opacity-50 [&>*]:duration-300">
+                    <Link to={icon.to}>
+                        <img
+                            className="h-8"
+                            src={icon.src}
+                            alt={icon.alt}
+                        />
                     </Link>
                 </motion.div>
             ))}

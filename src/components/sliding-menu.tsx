@@ -121,7 +121,7 @@ const SlidingMenu: React.FC = () => {
                                 <TextAnimate delay={300}>Catalog</TextAnimate>
                             </Link>
                             <Link
-                                to="/contact#top"
+                                to="/contact"
                                 onClick={closeMenu}>
                                 <TextAnimate delay={300}>Contact</TextAnimate>
                             </Link>

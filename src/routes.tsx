@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import ErrorPage from "./pages/ErrorPage.tsx";
 export const router = createBrowserRouter([
     {
-        path: "/" ,
+        path: "/",
         async lazy() {
             const Home = (await import("./pages/HomePage.tsx")).default;
             return {
@@ -10,8 +10,9 @@ export const router = createBrowserRouter([
             };
         },
         errorElement: <ErrorPage />,
-    },    {
-        path: "/catalog" ,
+    },
+    {
+        path: "/catalog",
         async lazy() {
             const Catalog = (await import("./pages/CatalogPage.tsx")).default;
             return {
@@ -19,5 +20,25 @@ export const router = createBrowserRouter([
             };
         },
         errorElement: <ErrorPage />,
-    }
+    },
+    {
+        path: "/contact",
+        async lazy() {
+            const Contact = (await import("./pages/ContactPage.tsx")).default;
+            return {
+                Component: Contact,
+            };
+        },
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/admin",
+        async lazy() {
+            const Catalog = (await import("./pages/AdminPage.tsx")).default;
+            return {
+                Component: Catalog,
+            };
+        },
+        errorElement: <ErrorPage />,
+    },
 ]);

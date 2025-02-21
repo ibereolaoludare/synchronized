@@ -31,7 +31,7 @@ export default function Header() {
                     <Link to={"/catalog"}>
                         <TextAnimate by="character">Catalog</TextAnimate>
                     </Link>
-                    <Link to={"/"}>
+                    <Link to={"/contact"}>
                         <TextAnimate by="character">Contact</TextAnimate>
                     </Link>
                 </div>
