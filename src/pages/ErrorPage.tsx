@@ -20,8 +20,8 @@ export default function ErrorPage() {
                 />
                 <div className="w-4/6 flex flex-col items-center justify-center gap-8">
                     <TypingAnimation className="text-sm font-normal text-center">Woah, how did we get here?</TypingAnimation>
-                    <TextAnimate className="text-xs text-center">
-                        If this persists we might not be in sync this time.
+                    <TextAnimate className="text-[.65rem] text-slate-200 text-center">
+                        If this persists we might not be synchronized this time.
                     </TextAnimate>
                     <Link to={"/"}>
                         <Button className="uppercase text-xs w-min bg-white border-none rounded-none text-black hover:bg-white/80">
