@@ -11,10 +11,17 @@ export default function Header() {
                     <div className="lg:hidden">
                         <SlidingMenuTrigger />
                     </div>
-                    <div className="flex w-full justify-center gap-4 items-center">
-                        <img className="max-md:h-8" src="/assets/images/stars.svg" />
-                        <span className="text-4xl max-md:text-2xl">SYNC</span>
-                    </div>
+                    <Link className="w-full" to={"/admin"}>
+                        <div className="flex w-full justify-center gap-4 items-center">
+                            <img
+                                className="max-md:h-8"
+                                src="/assets/images/stars.svg"
+                            />
+                            <span className="text-4xl max-md:text-2xl">
+                                SYNC
+                            </span>
+                        </div>
+                    </Link>
                     <CartDrawer />
                 </div>
                 <div className="flex justify-center gap-16 py-4 text-xs hover:[&>*]:opacity-50 [&>*]:duration-300 max-lg:hidden">
