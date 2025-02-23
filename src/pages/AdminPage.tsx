@@ -6,14 +6,8 @@ import Header from "@/components/header";
 import { Particles } from "@/components/magicui/particles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { createClient } from "@supabase/supabase-js";
-import { Database } from "@/lib/supabase-types";
 import { Link } from "react-router";
-
-const supabase = createClient<Database>(
-    process.env.PUBLIC_SUPABASE_URL!,
-    process.env.PUBLIC_SUPABASE_ANON_KEY!
-);
+import supabase from "@/lib/supabase";
 
 export default function AdminPage() {
     const [isOwned, setIsOwned] = useState<boolean | null>(null);

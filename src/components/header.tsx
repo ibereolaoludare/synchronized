@@ -8,10 +8,6 @@ interface Props {
 }
 
 export default function Header({ onlyBrand }: Props) {
-    window.addEventListener("load", e => {
-        
-    })
-
     return (
         <SlidingMenuProvider>
             <nav className="px-24 max-lg:px-16 max-sm:px-8 py-8 flex flex-col relative z-[40] bg-background">
