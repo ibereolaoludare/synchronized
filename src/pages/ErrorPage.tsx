@@ -10,7 +10,7 @@ export default function ErrorPage() {
     return (
         <div className="h-screen w-screen">
             <Particles
-                className="h-screen"
+                className="h-screen fixed w-screen overflow-hidden"
                 quantity={50}
             />
             <div className="h-full w-full gap-4 text-white flex flex-col justify-center items-center absolute top-0 left-0">
@@ -23,11 +23,11 @@ export default function ErrorPage() {
                         Woah, how did we get here?
                     </TypingAnimation>
                     <TextAnimate className="text-[.65rem] w-4/6 text-slate-200 text-center">
-                        If this persists we might not be synchronized this time.
+                        If this persists, we might not be synchronized this time.
                     </TextAnimate>
                 </div>
                 <Link to={"/"}>
-                    <Button className="uppercase text-xs w-min bg-white border-none rounded-none text-black hover:bg-white/80">
+                    <Button className="uppercase text-xs w-min bg-foreground border-none rounded-none text-black hover:bg-foreground/80">
                         Go to Homepage
                         <ArrowRight />
                     </Button>

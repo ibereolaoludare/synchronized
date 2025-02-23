@@ -3,10 +3,15 @@ import Header from "../components/header";
 import { Toaster } from "sonner";
 import SocialSidebar from "@/components/social-sidebar";
 import { Category, CategoryBody, CategoryContent } from "@/components/category";
+import { Particles } from "@/components/magicui/particles";
 
 export default function HomePage() {
     return (
         <>
+            <Particles
+                className="h-screen fixed w-screen overflow-hidden"
+                quantity={50}
+            />
             <Header />
             <SocialSidebar />
             <Category>

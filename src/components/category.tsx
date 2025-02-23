@@ -1,4 +1,6 @@
 import { ReactNode } from "react";
+import { motion } from "framer-motion";
+import { TextAnimate } from "./magicui/text-animate";
 
 interface Props {
     children: ReactNode;
@@ -9,21 +11,37 @@ export function Category({ children }: Props) {
 }
 
 export function CategoryContent({ children }: Props) {
-    return <div className="px-32 max-xl:px-24 max-lg:px-16 max-md:px-16 max-sm:px-8">{children}</div>;
+    return (
+        <div className="px-32 max-xl:px-24 max-lg:px-16 max-md:px-16 max-sm:px-8">
+            {children}
+        </div>
+    );
 }
 
 export function CategoryHeader({ children }: Props) {
-    return <div className="max-lg:pt-12 max-md:pt-8 max-sm:pt-4 px-4">{children}</div>;
+    return (
+        <div className="max-lg:pt-12 max-md:pt-8 max-sm:pt-4 px-4">
+            {children}
+        </div>
+    );
 }
 
 export function CategoryTitle({ children }: Props) {
     return (
-        <h1 className="text-sm">
-            {children}
-        </h1>
+        // @ts-ignore
+        <TextAnimate className="text-sm">{children}</TextAnimate>
     );
 }
 
 export function CategoryBody({ children }: Props) {
-    return <div className="grid grid-cols-3 max-lg:grid-cols-2 gap-16 max-lg:gap-8 py-8">{children}</div>;
+    return (
+        <motion.div
+            className="grid grid-cols-3 max-lg:grid-cols-2 gap-16 max-lg:gap-8 py-8"
+            initial={{ opacity: 0 }} // Start with 0 opacity
+            animate={{ opacity: 1 }} // Animate to full opacity
+            transition={{ duration: 1 }} // Transition duration
+        >
+            {children}
+        </motion.div>
+    );
 }

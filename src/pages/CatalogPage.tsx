@@ -6,6 +6,7 @@ import {
     CategoryTitle,
 } from "@/components/category";
 import Header from "@/components/header";
+import { Particles } from "@/components/magicui/particles";
 import ShopItem from "@/components/shop-item";
 import SocialSidebar from "@/components/social-sidebar";
 import { Toaster } from "sonner";
@@ -13,6 +14,10 @@ import { Toaster } from "sonner";
 export default function CatalogPage() {
     return (
         <>
+            <Particles
+                className="h-screen fixed w-screen overflow-hidden"
+                quantity={50}
+            />
             <Header />
             <SocialSidebar />
             <Category>
