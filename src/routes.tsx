@@ -34,9 +34,18 @@ export const router = createBrowserRouter([
     {
         path: "/admin",
         async lazy() {
-            const Catalog = (await import("./pages/AdminPage.tsx")).default;
+            const Admin = (await import("./pages/AdminPage.tsx")).default;
             return {
-                Component: Catalog,
+                Component: Admin,
+            };
+        },
+        errorElement: <ErrorPage />,
+    },{
+        path: "/dashboard",
+        async lazy() {
+            const Dashboard = (await import("./pages/DashboardPage.tsx")).default;
+            return {
+                Component: Dashboard,
             };
         },
         errorElement: <ErrorPage />,

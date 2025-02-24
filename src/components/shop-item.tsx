@@ -33,7 +33,7 @@ export default function ShopItem({ title, image, price, id }: Props) {
     const [quantity, setQuantity] = useState(1);
 
     return (
-        <div className="aspect-square gap-4 flex flex-col items-center justify-center [&>img]:hover:opacity-65 [&>*>.dialog-trigger]:hover:outline">
+        <div className="aspect-square gap-4 flex flex-col items-center justify-center [&>img]:hover:opacity-65 [&>*>.dialog-trigger]:hover:outline [&>*>.dialog-trigger]:hover:outline-white">
             <img
                 src={image}
                 className="max-h-40 duration-300"

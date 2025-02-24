@@ -34,18 +34,18 @@ export type Database = {
   }
   public: {
     Tables: {
-      isOwned: {
+      metadata: {
         Row: {
           created_at: string
-          value: boolean
+          is_owned: boolean
         }
         Insert: {
           created_at?: string
-          value?: boolean
+          is_owned?: boolean
         }
         Update: {
           created_at?: string
-          value?: boolean
+          is_owned?: boolean
         }
         Relationships: []
       }

@@ -104,23 +104,32 @@
     body {
         @apply h-screen bg-background text-foreground;
     }
+
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px hsl(var(--background)) inset !important;
+    }
+
+    input:-webkit-autofill{
+        -webkit-text-fill-color: hsl(var(--foreground));
+    }
 }
 
 .font-p2s {
     font-family: "Press Start 2P";
 }
 
-.text-xxs{
-    @apply text-[.65rem]
+.text-xxs {
+    @apply text-[.65rem];
 }
 
-
-
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+    * {
+        @apply border-border outline-ring/50;
     }
-  body {
-    @apply bg-background text-foreground;
+    body {
+        @apply bg-background text-foreground;
     }
 }

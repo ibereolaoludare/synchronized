@@ -1,25 +1,45 @@
-"use client"; // Add this if you're using Next.js App Router
-
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion"; // Import Framer Motion
 import ArrowRight from "@/components/arrow-right";
 import Header from "@/components/header";
 import { Particles } from "@/components/magicui/particles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import supabase from "@/lib/supabase";
+import LoadingSplash from "@/components/loading-splash";
 
 export default function AdminPage() {
+    const navigate = useNavigate();
     const [isOwned, setIsOwned] = useState<boolean | null>(null);
     const [loading, setLoading] = useState(true);
 
+    const emailRef = useRef<HTMLInputElement>(null);
+    const passwordRef = useRef<HTMLInputElement>(null);
+
     useEffect(() => {
         const fetchData = async () => {
-            const { data, error } = await supabase.from("isOwned").select();
+            const { data, error } = await supabase
+                .from("metadata")
+                .select("is_owned");
             if (error) {
                 console.error("Error fetching data:", error);
             } else {
-                setIsOwned(data.length > 0); // Assuming `isOwned` table has rows if the brand is owned
+                if (data && data.length > 0) {
+                    setIsOwned(data[0].is_owned); // Set isOwned based on the first row
+                } else {
+                    const { error } = await supabase
+                        .from("metadata")
+                        .insert({ is_owned: false });
+                    if (error) {
+                        console.log(error);
+                    }
+                    setIsOwned(false); // No rows in the table
+                }
+            }
+            // @ts-ignore
+            if (data[0].is_owned === true) {
+                navigate("/dashboard");
             }
             setLoading(false);
         };
@@ -28,11 +48,54 @@ export default function AdminPage() {
     }, []);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <LoadingSplash />;
+    }
+
+    async function handleCreateAccount() {
+        if (setIsOwned === null) {
+            console.log("Request Denied: Reload Page");
+            return;
+        }
+
+        const { error } = await supabase.auth.signUp({
+            email: emailRef.current?.value || "",
+            password: passwordRef.current?.value || "",
+        });
+        if (error) {
+            console.error("Error: ", error);
+        } else {
+            const { error } = await supabase
+                .from("metadata")
+                .update({ is_owned: true })
+                .eq("is_owned", false);
+            if (error) {
+                console.error("Error: ", error);
+                return;
+            }
+            setIsOwned(true);
+        }
+    }
+
+    async function handleLogin() {
+        const { error } = await supabase.auth.signInWithPassword({
+            email: emailRef.current?.value || "",
+            password: passwordRef.current?.value || "",
+        });
+        if (error) {
+            console.error("Error: ", error);
+        } else {
+            navigate("/dashboard");
+        }
     }
 
     const loginPage = (
-        <div className="outline flex flex-col items-center justify-start gap-8 outline-white aspect-square p-4">
+        <motion.div
+            key="loginPage" // Unique key for AnimatePresence
+            initial={{ opacity: 0 }} // Start invisible
+            animate={{ opacity: 1 }} // Fade in
+            exit={{ opacity: 0 }} // Fade out
+            transition={{ duration: 0.5 }} // Animation duration
+            className="outline flex flex-col items-center justify-start gap-8 outline-white aspect-square p-4">
             <div>
                 <Header onlyBrand={true} />
                 <h1 className="text-center">Log in to shop</h1>
@@ -42,14 +105,18 @@ export default function AdminPage() {
                     placeholder="Email"
                     type="email"
                     className="rounded-none !text-xs"
+                    ref={emailRef}
                 />
                 <div className="flex gap-4 w-full">
                     <Input
                         placeholder="Password"
                         type="password"
                         className="rounded-none !text-xs"
+                        ref={passwordRef}
                     />
-                    <Button className="border border-white rounded-none aspect-square w-10 bg-foreground/0 hover:bg-foreground/100 hover:text-background">
+                    <Button
+                        onClick={handleLogin}
+                        className="border border-white rounded-none aspect-square w-10 bg-foreground/0 hover:bg-foreground/100 hover:text-background">
                         <ArrowRight />
                     </Button>
                 </div>
@@ -62,14 +129,20 @@ export default function AdminPage() {
                     </Link>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 
     const createAccount = (
-        <div className="outline flex flex-col items-center justify-start gap-8 outline-white aspect-square p-4">
-            <div>
+        <motion.div
+            key="createAccount" // Unique key for AnimatePresence
+            initial={{ opacity: 0 }} // Start invisible
+            animate={{ opacity: 1 }} // Fade in
+            exit={{ opacity: 0 }} // Fade out
+            transition={{ duration: 0.5 }} // Animation duration
+            className="outline flex flex-col items-center justify-start gap-8 outline-white aspect-square p-4">
+            <div className="flex flex-col items-center justify-center">
                 <Header onlyBrand={true} />
-                <h1 className="text-center">
+                <h1 className="text-center w-64">
                     Create an account to own the brand
                 </h1>
             </div>
@@ -78,14 +151,18 @@ export default function AdminPage() {
                     placeholder="Email"
                     type="email"
                     className="rounded-none !text-xs"
+                    ref={emailRef}
                 />
                 <div className="flex gap-4 w-full">
                     <Input
                         placeholder="Password"
                         type="password"
                         className="rounded-none !text-xs"
+                        ref={passwordRef}
                     />
-                    <Button className="border border-white rounded-none aspect-square w-10 bg-foreground/0 hover:bg-foreground/100 hover:text-background">
+                    <Button
+                        onClick={handleCreateAccount}
+                        className="border border-white rounded-none aspect-square w-10 bg-foreground/0 hover:bg-foreground/100 hover:text-background">
                         <ArrowRight />
                     </Button>
                 </div>
@@ -100,7 +177,7 @@ export default function AdminPage() {
                     </Link>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 
     return (
@@ -110,7 +187,9 @@ export default function AdminPage() {
                 quantity={50}
             />
             <div className="flex flex-col justify-center items-center h-screen">
-                {isOwned ? loginPage : createAccount}
+                <AnimatePresence mode="wait">
+                    {isOwned ? loginPage : createAccount}
+                </AnimatePresence>
             </div>
         </>
     );

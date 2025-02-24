@@ -12,9 +12,9 @@ const contacts = [
         description: (
             <>
                 Talk to us on Instagram at{" "}
-                <span className="flex items-center justify-center bg-foreground/20 rounded w-min px-1 text-nowrap">
+                <span className="bg-foreground/20 rounded w-min text-nowrap">
                     @synchronized
-                </span>
+                </span>.
             </>
         ),
     },
@@ -26,9 +26,9 @@ const contacts = [
         description: (
             <>
                 Talk to us on Twitter at{" "}
-                <span className="flex items-center justify-center bg-foreground/20 rounded w-min px-1 text-nowrap">
+                <span className="bg-foreground/20 rounded w-min text-nowrap">
                     @synchronized
-                </span>
+                </span>.
             </>
         ),
     },
@@ -40,9 +40,9 @@ const contacts = [
         description: (
             <>
                 Talk to us on Phone at{" "}
-                <span className="flex items-center justify-center bg-foreground/20 rounded w-min px-1 text-nowrap">
+                <span className="bg-foreground/20 rounded w-min text-nowrap">
                     +234 81 3001 5634
-                </span>
+                </span>.
             </>
         ),
     },
@@ -53,9 +53,9 @@ const contacts = [
         description: (
             <>
                 Talk to us on Mail at{" "}
-                <span className="flex items-center justify-center bg-foreground/20 rounded w-min px-1 text-nowrap">
+                <span className="bg-foreground/20 rounded w-min text-nowrap">
                     @synchronized
-                </span>
+                </span>.
             </>
         ),
     },
