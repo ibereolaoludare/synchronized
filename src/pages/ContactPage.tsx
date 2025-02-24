@@ -84,16 +84,16 @@ export default function ContactPage() {
                                 ease: "linear",
                                 delay: index * 0.1, // Stagger effect
                             }}
-                            className="hover:[&>*]:opacity-50 p-4 outline h-64 max-lg:h-60 max-md:h-52 max-sm:w-full max-sm:h-auto outline-white aspect-square [&>*]:duration-300">
+                            className="hover:[&>*]:opacity-50 p-4 outline h-64 max-lg:h-60 max-md:h-52 max-sm:w-full max-sm:h-auto outline-foreground aspect-square [&>*]:duration-300">
                             <Link to={contact.to}>
                                 {contact.imgAlt ? (
                                     <img
-                                        className="h-8 outline outline-white"
+                                        className="h-8 outline outline-foreground"
                                         src={contact.src}
                                         alt={contact.alt}
                                     />
                                 ) : (
-                                    <div className="h-8 flex items-center justify-center w-min outline outline-white aspect-square text-xl">
+                                    <div className="h-8 flex items-center justify-center w-min outline outline-foreground aspect-square text-xl">
                                         @
                                     </div>
                                 )}

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export default function LoadingSplash() {
     return (
-        <div className="fixed top-0 left-0 w-full h-screen flex flex-col justify-center items-center z-[120]">
+        <div className="fixed top-0 left-0 w-full h-dvh flex flex-col justify-center items-center z-[120]">
             <motion.div
                 animate={{
                     opacity: [0.5, 1], // Fade from 0 (invisible) to 1 (fully visible)

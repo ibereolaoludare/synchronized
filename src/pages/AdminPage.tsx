@@ -17,6 +17,13 @@ export default function AdminPage() {
     const emailRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
 
+    async function signOut() {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            console.error("Error: ", error);
+        }
+    }
+
     useEffect(() => {
         const fetchData = async () => {
             const { data, error } = await supabase
@@ -24,6 +31,7 @@ export default function AdminPage() {
                 .select("is_owned");
             if (error) {
                 console.error("Error fetching data:", error);
+                signOut();
             } else {
                 if (data && data.length > 0) {
                     setIsOwned(data[0].is_owned); // Set isOwned based on the first row
@@ -39,7 +47,15 @@ export default function AdminPage() {
             }
             // @ts-ignore
             if (data[0].is_owned === true) {
-                navigate("/dashboard");
+                const { data, error } = await supabase.auth.getSession();
+                if (error) {
+                    console.error("Error: ", error);
+                } else {
+                    if (data.session) {
+                        console.log(data);
+                        navigate("/dashboard");
+                    }
+                }
             }
             setLoading(false);
         };
@@ -54,6 +70,7 @@ export default function AdminPage() {
     async function handleCreateAccount() {
         if (setIsOwned === null) {
             console.log("Request Denied: Reload Page");
+            navigate("/");
             return;
         }
 
@@ -95,7 +112,7 @@ export default function AdminPage() {
             animate={{ opacity: 1 }} // Fade in
             exit={{ opacity: 0 }} // Fade out
             transition={{ duration: 0.5 }} // Animation duration
-            className="outline flex flex-col items-center justify-start gap-8 outline-white aspect-square p-4">
+            className="outline flex flex-col items-center justify-start gap-8 outline-foreground aspect-square p-4">
             <div>
                 <Header onlyBrand={true} />
                 <h1 className="text-center">Log in to shop</h1>
@@ -116,7 +133,7 @@ export default function AdminPage() {
                     />
                     <Button
                         onClick={handleLogin}
-                        className="border border-white rounded-none aspect-square w-10 bg-foreground/0 hover:bg-foreground/100 hover:text-background">
+                        className="border border-foreground rounded-none aspect-square w-10 bg-foreground/0 hover:bg-foreground/100 hover:text-background">
                         <ArrowRight />
                     </Button>
                 </div>
@@ -139,7 +156,7 @@ export default function AdminPage() {
             animate={{ opacity: 1 }} // Fade in
             exit={{ opacity: 0 }} // Fade out
             transition={{ duration: 0.5 }} // Animation duration
-            className="outline flex flex-col items-center justify-start gap-8 outline-white aspect-square p-4">
+            className="outline flex flex-col items-center justify-start gap-8 outline-foreground aspect-square p-4">
             <div className="flex flex-col items-center justify-center">
                 <Header onlyBrand={true} />
                 <h1 className="text-center w-64">
@@ -162,7 +179,7 @@ export default function AdminPage() {
                     />
                     <Button
                         onClick={handleCreateAccount}
-                        className="border border-white rounded-none aspect-square w-10 bg-foreground/0 hover:bg-foreground/100 hover:text-background">
+                        className="border border-foreground rounded-none aspect-square w-10 bg-foreground/0 hover:bg-foreground/100 hover:text-background">
                         <ArrowRight />
                     </Button>
                 </div>
