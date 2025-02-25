@@ -32,6 +32,7 @@ export default function AdminPage() {
             if (error) {
                 console.error("Error fetching data:", error);
                 signOut();
+                window.location.reload()
             } else {
                 if (data && data.length > 0) {
                     setIsOwned(data[0].is_owned); // Set isOwned based on the first row
