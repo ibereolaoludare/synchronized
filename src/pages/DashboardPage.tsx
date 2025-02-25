@@ -26,18 +26,20 @@ export default function DashboardPage() {
                 return (
                     <>
                         <h1>Shop</h1>
-                        <div></div>
+                        <div>
+                            
+                        </div>
                     </>
                 );
         }
     }
 
     async function checkSession() {
-        const { data, error } = await supabase.auth.getSession();
-        if (error || data.session === null) {
+        const { data, error } = await supabase.auth.getUser();
+        if (error || data.user === null || data.user === undefined) {
             console.error("Error: ", error);
             navigate("/");
-        } else {
+        } else if (data.user) {
             setLoading(false);
         }
     }

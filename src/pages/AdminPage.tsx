@@ -46,13 +46,11 @@ export default function AdminPage() {
 
             // @ts-ignore
             if (data[0].is_owned === true) {
-                const { data, error } = await supabase.auth.getSession();
-                if (error || data.session === null) {
+                const { data, error } = await supabase.auth.getUser();
+                if (error || data.user === null || data.user === undefined) {
                     console.error("Error: ", error);
-                } else {
-                    if (data.session) {
-                        navigate("/dashboard");
-                    }
+                } else if (data.user) {
+                    navigate("/dashboard");
                 }
             }
             setLoading(false);
@@ -65,7 +63,8 @@ export default function AdminPage() {
         return <LoadingSplash />;
     }
 
-    async function handleCreateAccount() {
+    async function handleCreateAccount(e: any) {
+        e.preventDefault();
         if (setIsOwned === null) {
             console.error("Request Denied: Reload Page");
             navigate("/");
@@ -92,7 +91,8 @@ export default function AdminPage() {
         }
     }
 
-    async function handleLogin() {
+    async function handleLogin(e: any) {
+        e.preventDefault();
         const { error } = await supabase.auth.signInWithPassword({
             email: emailRef.current?.value || "",
             password: passwordRef.current?.value || "",
@@ -117,7 +117,7 @@ export default function AdminPage() {
                 <Header onlyBrand={true} />
                 <h1 className="text-center">Log in to shop</h1>
             </div>
-            <div className="flex flex-col justify-center items-center gap-4">
+            <form className="flex flex-col justify-center items-center gap-4">
                 <Input
                     placeholder="Email"
                     type="email"
@@ -133,7 +133,8 @@ export default function AdminPage() {
                     />
                     <Button
                         onClick={handleLogin}
-                        className="border border-foreground rounded-none aspect-square w-10 bg-foreground/0 hover:bg-foreground/100 hover:text-background">
+                        className="border border-foreground rounded-none aspect-square w-10 bg-foreground/0 hover:bg-foreground/100 hover:text-background"
+                        type="submit">
                         <ArrowRight />
                     </Button>
                 </div>
@@ -145,7 +146,7 @@ export default function AdminPage() {
                         Go to Homepage -&gt;
                     </Link>
                 </div>
-            </div>
+            </form>
         </motion.div>
     );
 
@@ -163,7 +164,7 @@ export default function AdminPage() {
                     Create an account to own the brand
                 </h1>
             </div>
-            <div className="flex flex-col justify-center items-center gap-4">
+            <form className="flex flex-col justify-center items-center gap-4">
                 <Input
                     placeholder="Email"
                     type="email"
@@ -179,7 +180,8 @@ export default function AdminPage() {
                     />
                     <Button
                         onClick={handleCreateAccount}
-                        className="border border-foreground rounded-none aspect-square w-10 bg-foreground/0 hover:bg-foreground/100 hover:text-background">
+                        className="border border-foreground rounded-none aspect-square w-10 bg-foreground/0 hover:bg-foreground/100 hover:text-background"
+                        type="submit">
                         <ArrowRight />
                     </Button>
                 </div>
@@ -193,7 +195,7 @@ export default function AdminPage() {
                         Go to Homepage -&gt;
                     </Link>
                 </div>
-            </div>
+            </form>
         </motion.div>
     );
 
