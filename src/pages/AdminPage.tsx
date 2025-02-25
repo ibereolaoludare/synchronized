@@ -38,7 +38,7 @@ export default function AdminPage() {
                         .from("metadata")
                         .insert({ is_owned: false });
                     if (error) {
-                        console.log(error);
+                        console.error(error);
                     }
                     setIsOwned(false); // No rows in the table
                 }
@@ -47,11 +47,10 @@ export default function AdminPage() {
             // @ts-ignore
             if (data[0].is_owned === true) {
                 const { data, error } = await supabase.auth.getSession();
-                if (error) {
+                if (error || data.session === null) {
                     console.error("Error: ", error);
                 } else {
                     if (data.session) {
-                        console.log(data);
                         navigate("/dashboard");
                     }
                 }
@@ -68,7 +67,7 @@ export default function AdminPage() {
 
     async function handleCreateAccount() {
         if (setIsOwned === null) {
-            console.log("Request Denied: Reload Page");
+            console.error("Request Denied: Reload Page");
             navigate("/");
             return;
         }

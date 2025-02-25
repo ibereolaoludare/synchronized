@@ -1,13 +1,15 @@
 import Header from "@/components/header";
 import { Particles } from "@/components/magicui/particles";
-import { Toaster } from "sonner";
+import { toast, Toaster } from "sonner";
 // import { signOut } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, Store } from "lucide-react";
 import { signOut } from "@/lib/utils";
+import supabase from "@/lib/supabase";
+import LoadingSplash from "@/components/loading-splash";
 
 interface Props {
     jsxID: "shop";
@@ -15,6 +17,7 @@ interface Props {
 
 export default function DashboardPage() {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState<"shop">("shop");
 
     function DashboardJSX({ jsxID }: Props) {
@@ -27,6 +30,24 @@ export default function DashboardPage() {
                     </>
                 );
         }
+    }
+
+    async function checkSession() {
+        const { data, error } = await supabase.auth.getSession();
+        if (error || data.session === null) {
+            console.error("Error: ", error);
+            navigate("/");
+        } else {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        checkSession();
+    }, []);
+
+    if (loading) {
+        return <LoadingSplash />;
     }
 
     return (
@@ -54,7 +75,11 @@ export default function DashboardPage() {
                         </Button>
                         <div className="w-full">
                             <Button
-                                onClick={() => {signOut(); navigate("/admin")}}
+                                onClick={() => {
+                                    signOut();
+                                    toast.success("Signed out successfully.");
+                                    setTimeout(() => navigate("/admin"), 2500);
+                                }}
                                 className="text-xs bg-white/20 hover:bg-white/40 flex gap-4 items-center justify-start w-full">
                                 <ArrowLeft />
                                 <span>Sign out</span>
@@ -63,7 +88,9 @@ export default function DashboardPage() {
                     </div>
                 </div>
                 <div className="border border-foreground w-full h-full p-8">
-                    <DashboardJSX jsxID={tab} />
+                    <AnimatePresence>
+                        <DashboardJSX jsxID={tab} />
+                    </AnimatePresence>
                 </div>
             </div>
             <Toaster
