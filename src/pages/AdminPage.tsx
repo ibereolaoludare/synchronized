@@ -8,21 +8,18 @@ import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router";
 import supabase from "@/lib/supabase";
 import LoadingSplash from "@/components/loading-splash";
+import { Toaster } from "sonner";
+import { toast } from "sonner";
+import { signOut } from "@/lib/utils";
 
 export default function AdminPage() {
-    const navigate = useNavigate();
     const [isOwned, setIsOwned] = useState<boolean | null>(null);
     const [loading, setLoading] = useState(true);
 
     const emailRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
 
-    async function signOut() {
-        const { error } = await supabase.auth.signOut();
-        if (error) {
-            console.error("Error: ", error);
-        }
-    }
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,7 +29,7 @@ export default function AdminPage() {
             if (error) {
                 console.error("Error fetching data:", error);
                 signOut();
-                window.location.reload()
+                setTimeout(() => window.location.reload(), 2500);
             } else {
                 if (data && data.length > 0) {
                     setIsOwned(data[0].is_owned); // Set isOwned based on the first row
@@ -46,6 +43,7 @@ export default function AdminPage() {
                     setIsOwned(false); // No rows in the table
                 }
             }
+
             // @ts-ignore
             if (data[0].is_owned === true) {
                 const { data, error } = await supabase.auth.getSession();
@@ -91,6 +89,7 @@ export default function AdminPage() {
                 return;
             }
             setIsOwned(true);
+            toast.success("Created account successfully.");
         }
     }
 
@@ -102,7 +101,8 @@ export default function AdminPage() {
         if (error) {
             console.error("Error: ", error);
         } else {
-            navigate("/dashboard");
+            toast.success("Logged in successfully.");
+            setTimeout(() => navigate("/dashboard"), 2500);
         }
     }
 
@@ -209,6 +209,15 @@ export default function AdminPage() {
                     {isOwned ? loginPage : createAccount}
                 </AnimatePresence>
             </div>
+            <Toaster
+                position="top-left"
+                toastOptions={{
+                    style: {
+                        borderRadius: 0,
+                        fontSize: "10px",
+                    },
+                }}
+            />
         </>
     );
 }
