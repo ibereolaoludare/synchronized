@@ -23,9 +23,16 @@ interface Props {
     title: string;
     price: number;
     id: number;
+    disableClickable?: boolean;
 }
 
-export default function ShopItem({ title, image, price, id }: Props) {
+export default function ShopItem({
+    title,
+    image,
+    price,
+    id,
+    disableClickable,
+}: Props) {
     const [selectedSize, setSelectedSize] = useState<string | undefined>(
         undefined
     );
@@ -40,17 +47,23 @@ export default function ShopItem({ title, image, price, id }: Props) {
             />
             <Dialog>
                 <DialogTrigger
+                    onClick={(e) => {
+                        if (disableClickable) e.preventDefault();
+                        return;
+                    }}
                     onMouseDown={() => {
                         setSelectedSize(undefined);
                         setQuantity(1);
                     }}>
                     <div className="dialog-trigger text-xs max-sm:text-[.65rem] flex flex-col items-center py-4 px-4 max-lg:px-3 max-sm:px-2 gap-2 cursor-pointer hover:bg-white hover:text-background duration-300 transition-colors border-slate-300">
                         <h1 className="uppercase w-full text-center flex items-center justify-center shrink-0 gap-2 text-[.65rem]">
-                            <ArrowUpRightBit
-                                height={16}
-                                width={16}
-                                className="max-md:hidden"
-                            />
+                            {!disableClickable && (
+                                <ArrowUpRightBit
+                                    height={16}
+                                    width={16}
+                                    className="max-md:hidden"
+                                />
+                            )}
                             <span>{title}</span>
                         </h1>
                         <h2>${price}</h2>

@@ -98,7 +98,7 @@ export default function AdminPage() {
             password: passwordRef.current?.value || "",
         });
         if (error) {
-            console.error("Error: ", error);
+            toast.error(`${error}`);
         } else {
             toast.success("Logged in successfully.");
             setTimeout(() => navigate("/dashboard"), 2500);

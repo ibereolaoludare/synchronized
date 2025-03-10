@@ -37,7 +37,8 @@ export default function HomePage() {
                         />
                     </CategoryBody>
                 </CategoryContent>
-                <Toaster
+            </Category>
+            <Toaster
                     position="top-left"
                     toastOptions={{
                         style: {
@@ -46,7 +47,6 @@ export default function HomePage() {
                         },
                     }}
                 />
-            </Category>
         </>
     );
 }

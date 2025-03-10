@@ -5,31 +5,407 @@ import { toast, Toaster } from "sonner";
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import { ArrowLeft, Store } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowLeft, PlusCircle, Store } from "lucide-react";
 import { signOut } from "@/lib/utils";
 import supabase from "@/lib/supabase";
 import LoadingSplash from "@/components/loading-splash";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Category, CategoryBody, CategoryContent } from "@/components/category";
+import ShopItem from "@/components/shop-item";
+import NumberInput from "@/components/number-input";
+import { Database } from "@/lib/supabase-types";
 
 interface Props {
     jsxID: "shop";
+}
+
+interface ShopProps {
+    hasCategoryPromise: () => Promise<boolean>;
 }
 
 export default function DashboardPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState<"shop">("shop");
+    const [catergories, setCategories] = useState<
+        undefined | Database["public"]["Tables"]["category"]["Row"][]
+    >(undefined);
+
+    function ShopTab({ hasCategoryPromise }: ShopProps) {
+        const [hasCategory, setHasCategory] = useState<boolean | null>(null);
+        const categoryRef = useRef<HTMLInputElement>(null);
+
+        const item: {
+            name: React.RefObject<HTMLInputElement>;
+            price: React.RefObject<HTMLInputElement>;
+            image: File | null;
+            stock: React.RefObject<HTMLInputElement>;
+        } = {
+            name: useRef<HTMLInputElement>(null),
+            price: useRef<HTMLInputElement>(null),
+            image: null,
+            stock: useRef<HTMLInputElement>(null),
+        };
+
+        async function handleCreateItem(categoryName: string) {
+            const itemImage = item.image;
+
+            if (!itemImage) {
+                console.error("No image provided");
+                return;
+            }
+
+            const { data: uploadData, error: uploadError } =
+                await supabase.storage
+                    .from("item-images")
+                    .upload(
+                        `public/${categoryName}/${item.name.current?.value}.png`,
+                        itemImage,
+                        {
+                            cacheControl: "3600",
+                            upsert: false,
+                        }
+                    );
+
+            if (uploadError) {
+                console.error("Upload error:", uploadError.message);
+                return;
+            }
+
+            console.log("Upload success:", uploadData);
+
+            const { data: categoryData, error: categoryError } = await supabase
+                .from("category")
+                .select("items")
+                .eq("name", categoryName)
+                .single();
+
+            if (categoryError) {
+                console.error("Category fetch error:", categoryError.message);
+                return;
+            }
+
+            const newItem = {
+                name: item.name.current?.value,
+                price: parseInt(item.price.current?.value ?? "0", 10),
+                stock: item.stock.current?.value,
+            };
+
+            const updatedItems = Array.isArray(categoryData.items)
+                ? [...categoryData.items, newItem]
+                : [newItem];
+
+            const { error: updateError } = await supabase
+                .from("category")
+                .update({ items: updatedItems })
+                .eq("name", categoryName);
+
+            if (updateError) {
+                console.error("Update error:", updateError.message);
+            } else {
+                console.log("Item successfully added to category");
+            }
+
+            window.location.reload();
+        }
+
+        useEffect(() => {
+            hasCategoryPromise().then((result) => {
+                setHasCategory(result);
+            });
+        }, []);
+
+        async function handleCreateCategory(e: any) {
+            e.preventDefault();
+            const { error } = await supabase
+                .from("category")
+                .insert({ name: `${categoryRef.current?.value}`, items: [] });
+
+            if (error) {
+                toast.error(`An error occured creating item.`);
+            } else {
+                toast.success("Category created successfully.");
+                setTimeout(() => window.location.reload(), 1000);
+            }
+        }
+
+        if (hasCategory === true) {
+            return (
+                <motion.div
+                    key="loginPage" // Unique key for AnimatePresence
+                    initial={{ opacity: 0 }} // Start invisible
+                    animate={{ opacity: 1 }} // Fade in
+                    exit={{ opacity: 0 }} // Fade out
+                    transition={{ duration: 0.5 }} // Animation duration
+                    className="h-full overflow-y-scroll px-4">
+                    <h1>Shop</h1>
+                    <div className="py-4 h-full">
+                        <Dialog>
+                            <DialogTrigger className="w-full">
+                                <Button className="w-full bg-foreground text-background rounded-none hover:bg-foreground/80 p-6 text-xs">
+                                    <PlusCircle />
+                                    Create a new category
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="!rounded-none border-0 p-12 flex flex-col max-w-[40rem] gap-4 max-lg:px-16 max-sm:px-8">
+                                <DialogHeader>
+                                    <DialogTitle className="text-sm">
+                                        Create category
+                                    </DialogTitle>
+                                    <DialogDescription className="text-[0.65rem]">
+                                        Enter the name of the category you want
+                                        to create.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <form>
+                                    <div className="flex gap-4 w-full">
+                                        <Input
+                                            placeholder="Category Name"
+                                            className="rounded-none !text-xs"
+                                            ref={categoryRef}
+                                        />
+                                    </div>
+                                    <div className="py-4">
+                                        <div className="flex sm:gap-8 gap-4 justify-end items-center max-sm:justify-between">
+                                            <Button
+                                                onClick={handleCreateCategory}
+                                                type="submit"
+                                                className="text-xs max-sm:text-[.65rem] w-min bg-white border-none rounded-none text-black hover:bg-white/80">
+                                                Create
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </DialogContent>
+                        </Dialog>
+                        {catergories &&
+                            catergories.map((category) => (
+                                <div
+                                    className="py-8 text-sm"
+                                    key={category.id}>
+                                    <div>{category.name}</div>
+                                    <div className="p-8 px-0">
+                                        <Dialog>
+                                            <DialogTrigger className="w-full">
+                                                <Button className="bg-foreground text-background rounded-none hover:bg-foreground/80 p-6 w-full text-xs">
+                                                    <PlusCircle />
+                                                    Add item to category
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent className="!rounded-none border-0 p-12 flex flex-col max-w-[40rem] gap-4 max-lg:px-16 max-sm:px-8">
+                                                <DialogHeader>
+                                                    <DialogTitle className="text-sm">
+                                                        Add Item
+                                                    </DialogTitle>
+                                                    <DialogDescription className="text-[0.65rem]">
+                                                        Enter the details of the
+                                                        item.
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                                <form
+                                                    onSubmit={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                    }}>
+                                                    <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-8 w-full [&>div>input]:!text-xs">
+                                                        <div className="gap-2 flex flex-col">
+                                                            <Input
+                                                                placeholder="Item Name"
+                                                                className="rounded-none !text-xs"
+                                                                ref={item.name}
+                                                                required
+                                                            />
+                                                            <div className="text-[.45rem]">
+                                                                This will be the
+                                                                name of the
+                                                                item.
+                                                            </div>
+                                                        </div>
+                                                        <div className="gap-2 flex flex-col">
+                                                            <NumberInput
+                                                                ref={item.price}
+                                                                placeholder={
+                                                                    "Item Price"
+                                                                }
+                                                            />
+                                                            <div className="text-[.45rem]">
+                                                                This will be the
+                                                                price of the
+                                                                item.
+                                                            </div>
+                                                        </div>
+                                                        <div className="gap-2 flex flex-col">
+                                                            <Input
+                                                                placeholder="Item Image"
+                                                                className="rounded-none text-[#737373] file:text-xs file:hidden"
+                                                                ref={
+                                                                    categoryRef
+                                                                }
+                                                                type="file"
+                                                                accept="image/png"
+                                                                onChange={(
+                                                                    e
+                                                                ) => {
+                                                                    item.image =
+                                                                        e.target
+                                                                            .files
+                                                                            ? e
+                                                                                  .target
+                                                                                  .files[0]
+                                                                            : null;
+                                                                }}
+                                                                required
+                                                            />
+                                                            <div className="text-[.45rem]">
+                                                                This will be the
+                                                                display image of
+                                                                the item.
+                                                            </div>
+                                                        </div>
+                                                        <div className="gap-2 flex flex-col">
+                                                            <NumberInput
+                                                                ref={item.stock}
+                                                                maxValue={100}
+                                                                placeholder={
+                                                                    "Item Stock"
+                                                                }
+                                                            />
+                                                            <div className="text-[.45rem]">
+                                                                This will be the
+                                                                quantity of the
+                                                                item available
+                                                                for sale.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="py-4">
+                                                        <div className="flex sm:gap-8 gap-4 justify-end items-center max-sm:justify-between">
+                                                            <Button
+                                                                onClick={() =>
+                                                                    handleCreateItem(
+                                                                        category.name
+                                                                    )
+                                                                }
+                                                                type="submit"
+                                                                className="text-xs max-sm:text-[.65rem] w-min bg-white border-none rounded-none text-black hover:bg-white/80">
+                                                                Create
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </DialogContent>
+                                        </Dialog>
+                                    </div>
+                                    <Category>
+                                        <CategoryContent className="!px-0">
+                                            <CategoryBody>
+                                                {category.items &&
+                                                    // @ts-ignore
+                                                    category.items.map(
+                                                        // @ts-ignore
+                                                        (item, index) => {
+                                                            const { data } =
+                                                                supabase.storage
+                                                                    .from(
+                                                                        "item-images"
+                                                                    )
+                                                                    .getPublicUrl(
+                                                                        `public/${category.name}/${item.name}.png`
+                                                                    );
+
+                                                            return (
+                                                                <ShopItem
+                                                                    key={index}
+                                                                    image={data.publicUrl}
+                                                                    title={
+                                                                        item.name
+                                                                    }
+                                                                    id={index}
+                                                                    price={
+                                                                        item.price
+                                                                    }
+                                                                    disableClickable
+                                                                />
+                                                            );
+                                                        }
+                                                    )}
+                                            </CategoryBody>
+                                        </CategoryContent>
+                                    </Category>
+                                </div>
+                            ))}
+                    </div>
+                </motion.div>
+            );
+        } else if (hasCategory === false) {
+            return (
+                <motion.div
+                    key="loginPage" // Unique key for AnimatePresence
+                    initial={{ opacity: 0 }} // Start invisible
+                    animate={{ opacity: 1 }} // Fade in
+                    exit={{ opacity: 0 }} // Fade out
+                    transition={{ duration: 0.5 }} // Animation duration
+                    className="w-full h-full flex flex-col gap-12 items-center justify-center text-sm">
+                    Your shop seems to be empty.
+                    <Dialog>
+                        <DialogTrigger>
+                            <Button className="bg-foreground text-background rounded-none hover:bg-foreground/80 p-6 text-xs">
+                                <PlusCircle />
+                                Add to shop
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="!rounded-none border-0 p-12 flex flex-col max-w-[40rem] gap-4 max-lg:px-16 max-sm:px-8">
+                            <DialogHeader>
+                                <DialogTitle className="text-sm">
+                                    Create category
+                                </DialogTitle>
+                                <DialogDescription className="text-[0.65rem]">
+                                    Enter the name of the category you want to
+                                    create.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <form>
+                                <div className="flex gap-4 w-full">
+                                    <Input
+                                        placeholder="Category Name"
+                                        className="rounded-none !text-xs"
+                                        ref={categoryRef}
+                                    />
+                                </div>
+                                <div className="py-4">
+                                    <div className="flex sm:gap-8 gap-4 justify-end items-center max-sm:justify-between">
+                                        <Button
+                                            onClick={handleCreateCategory}
+                                            type="submit"
+                                            className="text-xs max-sm:text-[.65rem] w-min bg-white border-none rounded-none text-black hover:bg-white/80">
+                                            Create
+                                        </Button>
+                                    </div>
+                                </div>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
+                </motion.div>
+            );
+        }
+    }
 
     function DashboardJSX({ jsxID }: Props) {
         switch (jsxID) {
             case "shop":
                 return (
-                    <>
-                        <h1>Shop</h1>
-                        <div>
-                            
-                        </div>
-                    </>
+                    <AnimatePresence>
+                        <ShopTab hasCategoryPromise={checkCategory} />
+                    </AnimatePresence>
                 );
         }
     }
@@ -42,6 +418,24 @@ export default function DashboardPage() {
         } else if (data.user) {
             setLoading(false);
         }
+    }
+
+    const hasChecked = useRef(false);
+
+    async function checkCategory() {
+        if (hasChecked.current) return true; // Skip if already checked
+        hasChecked.current = true;
+
+        const { data, error } = await supabase.from("category").select();
+
+        if (error) {
+            toast.error(`${error}`);
+        } else if (data.length) {
+            setCategories(data);
+            return true;
+        }
+
+        return false;
     }
 
     useEffect(() => {

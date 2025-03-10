@@ -112,8 +112,38 @@
         -webkit-box-shadow: 0 0 0 30px hsl(var(--background)) inset !important;
     }
 
-    input:-webkit-autofill{
+    input:-webkit-autofill {
         -webkit-text-fill-color: hsl(var(--foreground));
+    }
+    /* For WebKit browsers (Chrome, Safari, Edge) */
+    ::-webkit-scrollbar {
+        width: 12px; /* Width of the scrollbar */
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent; /* Transparent track */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.5); /* Semi-transparent white thumb */
+        border-radius: 6px; /* Rounded corners */
+        border: 3px solid transparent; /* Transparent border to create padding effect */
+        background-clip: content-box; /* Ensures the background doesn't cover the border */
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(
+            255,
+            255,
+            255,
+            0.7
+        ); /* Slightly less transparent on hover */
+    }
+
+    /* For Firefox */
+    * {
+        scrollbar-width: thin; /* "auto" or "thin" */
+        scrollbar-color: rgba(255, 255, 255, 0.5) transparent; /* Thumb and track colors */
     }
 }
 

@@ -34,6 +34,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      category: {
+        Row: {
+          created_at: string
+          id: number
+          items: Json
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          items: Json
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          items?: Json
+          name?: string
+        }
+        Relationships: []
+      }
       metadata: {
         Row: {
           created_at: string

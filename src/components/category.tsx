@@ -1,26 +1,28 @@
 import { ReactNode } from "react";
 import { motion } from "framer-motion";
 import { TextAnimate } from "./magicui/text-animate";
+import { cn } from "@/lib/utils";
 
 interface Props {
     children: ReactNode;
+    className?: string;
 }
 
 export function Category({ children }: Props) {
     return <>{children}</>;
 }
 
-export function CategoryContent({ children }: Props) {
+export function CategoryContent({ children, className }: Props) {
     return (
-        <div className="px-32 max-xl:px-24 max-lg:px-16 max-md:px-16 max-sm:px-8">
+        <div className={cn("px-32 max-xl:px-24 max-lg:px-16 max-md:px-16 max-sm:px-8", className)}>
             {children}
         </div>
     );
 }
 
-export function CategoryHeader({ children }: Props) {
+export function CategoryHeader({ children, className }: Props) {
     return (
-        <div className="max-lg:pt-12 max-md:pt-8 max-sm:pt-4 px-4">
+        <div className={cn("max-lg:pt-12 max-md:pt-8 max-sm:pt-4 px-4", className)}>
             {children}
         </div>
     );
