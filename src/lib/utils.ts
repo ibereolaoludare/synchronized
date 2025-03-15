@@ -15,3 +15,9 @@ export async function signOut() {
         console.error("Error: ", error);
     }
 }
+
+export function generateUUID() {
+    return crypto.randomUUID();
+  }
+  
+  

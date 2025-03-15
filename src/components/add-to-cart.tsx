@@ -9,7 +9,7 @@ interface itemData {
     image: string;
     title: string;
     price: number;
-    id: number;
+    id: string;
     quantity: number;
     size: string | undefined;
 }

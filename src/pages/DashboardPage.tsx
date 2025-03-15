@@ -6,8 +6,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, PlusCircle, Store } from "lucide-react";
-import { signOut } from "@/lib/utils";
+import { ArrowLeft, PlusCircle, Store, XCircle } from "lucide-react";
+import { generateUUID, signOut } from "@/lib/utils";
 import supabase from "@/lib/supabase";
 import LoadingSplash from "@/components/loading-splash";
 import {
@@ -23,6 +23,7 @@ import { Category, CategoryBody, CategoryContent } from "@/components/category";
 import ShopItem from "@/components/shop-item";
 import NumberInput from "@/components/number-input";
 import { Database } from "@/lib/supabase-types";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 interface Props {
     jsxID: "shop";
@@ -45,16 +46,34 @@ export default function DashboardPage() {
         const categoryRef = useRef<HTMLInputElement>(null);
 
         const item: {
+            id: string;
             name: React.RefObject<HTMLInputElement>;
             price: React.RefObject<HTMLInputElement>;
             image: File | null;
             stock: React.RefObject<HTMLInputElement>;
         } = {
+            id: "",
             name: useRef<HTMLInputElement>(null),
             price: useRef<HTMLInputElement>(null),
             image: null,
             stock: useRef<HTMLInputElement>(null),
         };
+
+        async function handleDeleteCategory(categoryName: string) {
+            const { error: deleteError } = await supabase
+                .from("category")
+                .delete()
+                .eq("name", categoryName);
+        
+            if (deleteError) {
+                toast.error(`Delete error: ${deleteError.message}`);
+            } else {
+                toast.success("Category successfully deleted");
+            }
+        
+            window.location.reload();
+        }
+        
 
         async function handleCreateItem(categoryName: string) {
             const itemImage = item.image;
@@ -64,11 +83,18 @@ export default function DashboardPage() {
                 return;
             }
 
+            const newItem = {
+                id: generateUUID(),
+                name: item.name.current?.value,
+                price: parseInt(item.price.current?.value ?? "0", 10),
+                stock: item.stock.current?.value,
+            };
+
             const { data: uploadData, error: uploadError } =
                 await supabase.storage
                     .from("item-images")
                     .upload(
-                        `public/${categoryName}/${item.name.current?.value}.png`,
+                        `public/${categoryName}/${newItem.id}.png`,
                         itemImage,
                         {
                             cacheControl: "3600",
@@ -94,12 +120,6 @@ export default function DashboardPage() {
                 return;
             }
 
-            const newItem = {
-                name: item.name.current?.value,
-                price: parseInt(item.price.current?.value ?? "0", 10),
-                stock: item.stock.current?.value,
-            };
-
             const updatedItems = Array.isArray(categoryData.items)
                 ? [...categoryData.items, newItem]
                 : [newItem];
@@ -110,9 +130,9 @@ export default function DashboardPage() {
                 .eq("name", categoryName);
 
             if (updateError) {
-                console.error("Update error:", updateError.message);
+                toast.error(`Update error: updateError.message`);
             } else {
-                console.log("Item successfully added to category");
+                toast.success("Item successfully added to category");
             }
 
             window.location.reload();
@@ -193,7 +213,7 @@ export default function DashboardPage() {
                                     className="py-8 text-sm"
                                     key={category.id}>
                                     <div>{category.name}</div>
-                                    <div className="p-8 px-0">
+                                    <div className="p-8 px-0 gap-4 flex flex-col">
                                         <Dialog>
                                             <DialogTrigger className="w-full">
                                                 <Button className="bg-foreground text-background rounded-none hover:bg-foreground/80 p-6 w-full text-xs">
@@ -215,6 +235,9 @@ export default function DashboardPage() {
                                                     onSubmit={(e) => {
                                                         e.preventDefault();
                                                         e.stopPropagation();
+                                                        handleCreateItem(
+                                                            category.name
+                                                        );
                                                     }}>
                                                     <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-8 w-full [&>div>input]:!text-xs">
                                                         <div className="gap-2 flex flex-col">
@@ -290,11 +313,6 @@ export default function DashboardPage() {
                                                     <div className="py-4">
                                                         <div className="flex sm:gap-8 gap-4 justify-end items-center max-sm:justify-between">
                                                             <Button
-                                                                onClick={() =>
-                                                                    handleCreateItem(
-                                                                        category.name
-                                                                    )
-                                                                }
                                                                 type="submit"
                                                                 className="text-xs max-sm:text-[.65rem] w-min bg-white border-none rounded-none text-black hover:bg-white/80">
                                                                 Create
@@ -304,11 +322,39 @@ export default function DashboardPage() {
                                                 </form>
                                             </DialogContent>
                                         </Dialog>
+                                        <AlertDialog>
+                                            <AlertDialogTrigger className="text-xs w-full gap-2 bg-red-500 p-4 flex items-center justify-center rounded-none hover:text-foreground text-foreground hover:bg-red-800 max-sm:text-[.65rem]">
+                                                <XCircle size={12} />
+                                                Delete category
+                                            </AlertDialogTrigger>
+                                            <AlertDialogContent className="!rounded-none border-0 p-12 gap-12">
+                                                <AlertDialogHeader className="[&>*]:text-xs">
+                                                    <AlertDialogTitle>
+                                                        Delete all cart items?
+                                                    </AlertDialogTitle>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter className="[&>*]:text-xs gap-4">
+                                                    <AlertDialogCancel className="uppercase text-xs w-min bg-white border-none rounded-none text-black hover:bg-white/80">
+                                                        Cancel
+                                                    </AlertDialogCancel>
+                                                    <AlertDialogAction
+                                                        onClick={() =>
+                                                            handleDeleteCategory(
+                                                                category.name
+                                                            )
+                                                        }
+                                                        className="uppercase text-xs w-min text-nowrap bg-white text-red-500 border-none rounded-none hover:bg-white/80">
+                                                        Delete
+                                                    </AlertDialogAction>
+                                                </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                        </AlertDialog>
                                     </div>
                                     <Category>
                                         <CategoryContent className="!px-0">
                                             <CategoryBody>
-                                                {category.items &&
+                                                {/* @ts-ignore */}
+                                                {category.items.length ? (
                                                     // @ts-ignore
                                                     category.items.map(
                                                         // @ts-ignore
@@ -319,25 +365,39 @@ export default function DashboardPage() {
                                                                         "item-images"
                                                                     )
                                                                     .getPublicUrl(
-                                                                        `public/${category.name}/${item.name}.png`
+                                                                        `public/${category.name}/${item.id}.png`
                                                                     );
 
                                                             return (
                                                                 <ShopItem
                                                                     key={index}
-                                                                    image={data.publicUrl}
+                                                                    image={
+                                                                        data.publicUrl
+                                                                    }
                                                                     title={
                                                                         item.name
                                                                     }
-                                                                    id={index}
+                                                                    id={item.id}
                                                                     price={
                                                                         item.price
                                                                     }
-                                                                    disableClickable
+                                                                    stock={
+                                                                        item.stock
+                                                                    }
+                                                                    categoryName={
+                                                                        category.name
+                                                                    }
+                                                                    editable
                                                                 />
                                                             );
                                                         }
-                                                    )}
+                                                    )
+                                                ) : (
+                                                    <div className="p-4 text-xs w-full flex items-center justify-center col-span-3">
+                                                        No items in this
+                                                        category.
+                                                    </div>
+                                                )}
                                             </CategoryBody>
                                         </CategoryContent>
                                     </Category>

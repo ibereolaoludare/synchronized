@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import { Input } from "./ui/input";
 
 interface Props {
+  value?: number;
   maxValue?: number;
   placeholder: string;
 }
 
-const NumberInput = React.forwardRef<HTMLInputElement, Props>(({ maxValue, placeholder }, ref) => {
-  const [value, setValue] = useState<number | string>("");
+const NumberInput = React.forwardRef<HTMLInputElement, Props>(({ maxValue, placeholder, value }, ref) => {
+  const [valueOf, setValueOf] = useState<number | string>(value || "");
 
   const onValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let num = Number(e.target.value);
@@ -15,7 +16,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, Props>(({ maxValue, place
     // Ensure value is positive and within range
     if (maxValue && num > maxValue) num = maxValue;
 
-    setValue(num);
+    setValueOf(num);
   };
 
   return (
@@ -24,7 +25,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, Props>(({ maxValue, place
       className="rounded-none file:text-xs file:hidden"
       ref={ref}
       type="number"
-      value={value}
+      value={valueOf}
       onChange={onValueChange}
       min={0}
       max={maxValue}
