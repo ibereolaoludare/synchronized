@@ -1,4 +1,3 @@
-import ShopItem from "@/components/shop-item";
 import Header from "../components/header";
 import { Toaster } from "sonner";
 import SocialSidebar from "@/components/social-sidebar";
@@ -17,7 +16,7 @@ export default function HomePage() {
             <Category>
                 <CategoryContent>
                     <CategoryBody>
-                        <ShopItem
+                        {/* <ShopItem
                             image="/assets/images/white-shirt.png"
                             title="white tee-shirt"
                             id={0}
@@ -34,7 +33,8 @@ export default function HomePage() {
                             title="white tee-shirt"
                             id={2}
                             price={20}
-                        />
+                        /> */}
+                        <></>
                     </CategoryBody>
                 </CategoryContent>
             </Category>
