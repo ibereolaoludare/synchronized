@@ -17,13 +17,22 @@ import {
 } from "./ui/dialog";
 import AddToCart from "./add-to-cart";
 import { useRef, useState } from "react";
-import { Pencil } from "lucide-react";
+import { Pencil, XCircle } from "lucide-react";
 import NumberInput from "./number-input";
 import { Input } from "./ui/input";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { toast } from "sonner";
 import supabase from "@/lib/supabase";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "./ui/alert-dialog";
 
 interface Props {
     image: string;
@@ -196,7 +205,7 @@ export default function ShopItem({
                                 <div className="flex flex-col gap-4">
                                     <div className="flex flex-col gap-2">
                                         <Dialog>
-                                            <DialogTrigger className="flex justify-center items-center p-3 duration-300 gap-2 uppercase text-xs w-full bg-transparent border rounded-none hover:text-background text-foreground hover:bg-foreground max-sm:text-[.65rem]">
+                                            <DialogTrigger className="flex justify-center items-center p-3 duration-300 gap-2 uppercase text-xs w-full bg-foreground border rounded-none text-background hover:bg-foreground/80 max-sm:text-[.65rem]">
                                                 <Pencil size={12} />
                                                 EDIT
                                             </DialogTrigger>
@@ -277,6 +286,9 @@ export default function ShopItem({
                                                             <Button
                                                                 type="submit"
                                                                 className="text-xs max-sm:text-[.65rem] w-min bg-white border-none rounded-none text-black hover:bg-white/80">
+                                                                <Pencil
+                                                                    size={12}
+                                                                />
                                                                 Edit
                                                             </Button>
                                                         </div>
@@ -286,13 +298,14 @@ export default function ShopItem({
                                         </Dialog>
                                         {/* <Button></Button> */}
                                         <AlertDialog>
-                                            <AlertDialogTrigger className="uppercase text-xs w-full bg-red-500 p-3 rounded-none hover:text-foreground text-foreground hover:bg-red-800 max-sm:text-[.65rem]">
-                                                DELETE
+                                            <AlertDialogTrigger className="uppercase text-xs w-full bg-red-500 p-3 rounded-none flex items-center justify-center gap-2 hover:text-foreground text-foreground hover:bg-red-800 max-sm:text-[.65rem]">
+                                                <XCircle size={12} />
+                                                Delete
                                             </AlertDialogTrigger>
                                             <AlertDialogContent className="!rounded-none border-0 p-12 gap-12">
                                                 <AlertDialogHeader className="[&>*]:text-xs">
                                                     <AlertDialogTitle>
-                                                        Delete all cart items?
+                                                        Delete item?
                                                     </AlertDialogTitle>
                                                 </AlertDialogHeader>
                                                 <AlertDialogFooter className="[&>*]:text-xs gap-4">
@@ -308,6 +321,7 @@ export default function ShopItem({
                                                             )
                                                         }
                                                         className="uppercase text-xs w-min text-nowrap bg-white text-red-500 border-none rounded-none hover:bg-white/80">
+                                                        <XCircle size={12} />
                                                         Delete
                                                     </AlertDialogAction>
                                                 </AlertDialogFooter>

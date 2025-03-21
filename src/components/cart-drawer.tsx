@@ -273,7 +273,7 @@ export default function CartDrawer() {
                                             Delete all cart items?
                                         </AlertDialogTitle>
                                     </AlertDialogHeader>
-                                    <AlertDialogFooter className="[&>*]:text-xs gap-4">
+                                    <AlertDialogFooter className="[&>*]:text-xs gap-4 sm:flex-row">
                                         <AlertDialogCancel className="uppercase text-xs w-min bg-white border-none rounded-none text-black hover:bg-white/80">
                                             Cancel
                                         </AlertDialogCancel>
