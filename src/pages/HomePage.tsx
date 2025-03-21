@@ -32,6 +32,7 @@ export default function HomePage() {
             toast.error(`${error}`);
         } else if (data.length) {
             setCategories(data);
+            setSearchCategories(data);
             setLoading(false);
             return true;
         }
@@ -41,7 +42,6 @@ export default function HomePage() {
 
     useEffect(() => {
         checkCategory();
-        filterCategories("");
     }, []);
 
     const [searchQuery, setSearchQuery] = useState("");
