@@ -41,6 +41,7 @@ export default function HomePage() {
 
     useEffect(() => {
         checkCategory();
+        filterCategories("");
     }, []);
 
     const [searchQuery, setSearchQuery] = useState("");
