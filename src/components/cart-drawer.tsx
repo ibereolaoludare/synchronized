@@ -120,8 +120,8 @@ export default function CartDrawer() {
 
     return (
         <Drawer
-        open={drawerState}
-        onOpenChange={() => setDrawerState(!drawerState)}>
+            open={drawerState}
+            onOpenChange={() => setDrawerState(!drawerState)}>
             <DrawerTrigger className="shrink-0">
                 <Button className="flex justify-end bg-transparent hover:bg-transparent/0 hover:[&>*]:opacity-50 [&>*]:duration-300 shrink-0 p-0">
                     <img
@@ -130,7 +130,7 @@ export default function CartDrawer() {
                     />
                 </Button>
             </DrawerTrigger>
-            <DrawerContent className="!rounded-none border-0 px-24 max-lg:px-16 max-sm:px-8 py-6">
+            <DrawerContent className="!rounded-none border-0 px-24 max-lg:px-16 max-sm:px-8 py-6 max-h-[80vh]">
                 <DrawerHeader className="flex justify-between items-center">
                     <DrawerTitle className="max-sm:text-sm">Cart</DrawerTitle>
                     <DrawerClose>
@@ -140,73 +140,77 @@ export default function CartDrawer() {
                     </DrawerClose>
                 </DrawerHeader>
                 {isMobile ? (
-                    <div className="flex flex-col gap-4">
-                        {cartItems.length === 0 ? (
-                            <div className="p-12 items-center justify-center flex">
-                                <TextAnimate className="text-[0.65rem]">
-                                    Your cart is empty.
-                                </TextAnimate>
-                            </div>
-                        ) : (
-                            cartItems.map((item) => (
-                                <motion.div
-                                    key={item.id}
-                                    className="flex-col gap-4 items-center p-4 cursor-pointer hover:bg-white/10"
-                                    initial={{ opacity: 1, height: "auto" }}
-                                    animate={
-                                        removingItem === item.id ||
-                                        removingItem === -1
-                                            ? { opacity: 0, height: 0 }
-                                            : {}
-                                    }
-                                    transition={{
-                                        duration: 0.3,
-                                        ease: "easeInOut",
-                                    }}>
-                                    <div className="flex gap-4 h-max">
-                                        <img
-                                            src={item.image}
-                                            alt={item.title}
-                                            className="h-16"
-                                        />
-                                        <div className="flex flex-col h-full justify-between">
-                                            <div>
-                                                <p className="text-[.65rem] uppercase">
-                                                    {item.title} - {item.size}
+                    <>
+                        <div className="flex flex-col gap-4 overflow-scroll">
+                            {cartItems.length === 0 ? (
+                                <div className="p-12 items-center justify-center flex">
+                                    <TextAnimate className="text-[0.65rem]">
+                                        Your cart is empty.
+                                    </TextAnimate>
+                                </div>
+                            ) : (
+                                cartItems.map((item) => (
+                                    <motion.div
+                                        key={item.id}
+                                        className="flex-col gap-4 items-center p-4 cursor-pointer hover:bg-white/10"
+                                        initial={{ opacity: 1, height: "auto" }}
+                                        animate={
+                                            removingItem === item.id ||
+                                            removingItem === -1
+                                                ? { opacity: 0, height: 0 }
+                                                : {}
+                                        }
+                                        transition={{
+                                            duration: 0.3,
+                                            ease: "easeInOut",
+                                        }}>
+                                        <div className="flex gap-4 h-max">
+                                            <img
+                                                src={item.image}
+                                                alt={item.title}
+                                                className="h-16"
+                                            />
+                                            <div className="flex flex-col h-full justify-between">
+                                                <div>
+                                                    <p className="text-[.65rem] uppercase">
+                                                        {item.title} -{" "}
+                                                        {item.size}
+                                                    </p>
+                                                </div>
+                                                <p className="text-[.65rem]">
+                                                    Price: NGN{" "}
+                                                    {item.price.toFixed(2)}
+                                                </p>
+                                                <p className="text-[.65rem]">
+                                                    Qty: {item.quantity}
                                                 </p>
                                             </div>
-                                            <p className="text-[.65rem]">
-                                                Price: NGN{" "}
-                                                {item.price.toFixed(2)}
-                                            </p>
-                                            <p className="text-[.65rem]">
-                                                Qty: {item.quantity}
-                                            </p>
                                         </div>
-                                    </div>
-                                    <div className="text-[.65rem] items-end flex justify-between pt-4">
-                                        <div
-                                            className="text-red-500 hover:text-red-500/80"
-                                            onClick={() =>
-                                                handleDeleteItem(item.id)
-                                            }>
-                                            Delete
+                                        <div className="text-[.65rem] items-end flex justify-between pt-4">
+                                            <div
+                                                className="text-red-500 hover:text-red-500/80"
+                                                onClick={() =>
+                                                    handleDeleteItem(item.id)
+                                                }>
+                                                Delete
+                                            </div>
+                                            <div>
+                                                Total -{" "}
+                                                {"NGN " +
+                                                    (
+                                                        item.price *
+                                                        item.quantity
+                                                    ).toFixed(2)}
+                                            </div>
                                         </div>
-                                        <div>
-                                            Total -{" "}
-                                            {"NGN " +
-                                                (
-                                                    item.price * item.quantity
-                                                ).toFixed(2)}
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            ))
-                        )}
-                        <div className="text-right text-[.65rem]">
+                                    </motion.div>
+                                ))
+                            )}
+                        </div>
+                        <div className="text-right text-[.65rem] py-2">
                             Total: NGN {cartTotal.toFixed(2)}
                         </div>
-                    </div>
+                    </>
                 ) : (
                     <>
                         <Table className="[&>*]:text-xs">
@@ -350,13 +354,14 @@ export default function CartDrawer() {
                                         onSubmit={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            email.current &&
+                                            if (email.current) {
+                                                setInnerDialogState(false);
                                                 setDrawerState(false);
-                                            email.current &&
                                                 payWithPayStack(
                                                     email.current?.value,
                                                     (100 * cartTotal).toString()
                                                 );
+                                            }
                                         }}>
                                         <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-8 w-full [&>div>input]:!text-xs">
                                             <div className="gap-2 flex flex-col">
