@@ -15,7 +15,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { payWithPayStack, updateCartData } from "@/lib/utils";
 import { TextAnimate } from "./magicui/text-animate";
 import { motion } from "framer-motion";
@@ -31,6 +31,16 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "./ui/dialog";
+import { Input } from "./ui/input";
+import { ShoppingBasket } from "lucide-react";
 
 interface CartItem {
     title: string;
@@ -44,7 +54,10 @@ interface CartItem {
 export default function CartDrawer() {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [removingItem, setRemovingItem] = useState<number | null>(null);
+    const [innerDialogState, setInnerDialogState] = useState(false);
+    const [drawerState, setDrawerState] = useState(false);
     const [isMobile, setIsMobile] = useState<boolean>(false);
+    const email = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         const updateIsMobile = () => {
@@ -106,7 +119,9 @@ export default function CartDrawer() {
     }, [cartItems]); // Added dependency array
 
     return (
-        <Drawer>
+        <Drawer
+        open={drawerState}
+        onOpenChange={() => setDrawerState(!drawerState)}>
             <DrawerTrigger className="shrink-0">
                 <Button className="flex justify-end bg-transparent hover:bg-transparent/0 hover:[&>*]:opacity-50 [&>*]:duration-300 shrink-0 p-0">
                     <img
@@ -311,19 +326,68 @@ export default function CartDrawer() {
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
                             </AlertDialog>
-                            <DrawerClose>
-                                <Button
-                                    onClick={() =>
-                                        payWithPayStack(
-                                            "test@gmail.com",
-                                            (cartTotal * 100).toString()
-                                        )
-                                    }
-                                    className="uppercase text-xs max-sm:text-[.65rem] w-min bg-white border-none rounded-none text-black hover:bg-white/80">
-                                    Checkout
-                                    <ArrowRight />
-                                </Button>
-                            </DrawerClose>
+                            <Dialog
+                                open={innerDialogState}
+                                onOpenChange={() =>
+                                    setInnerDialogState(!innerDialogState)
+                                }>
+                                <DialogTrigger>
+                                    <DrawerClose>
+                                        <Button className="uppercase text-xs max-sm:text-[.65rem] w-min bg-white border-none rounded-none text-black hover:bg-white/80">
+                                            Checkout
+                                            <ArrowRight />
+                                        </Button>
+                                    </DrawerClose>
+                                </DialogTrigger>
+                                <DialogContent className="!rounded-none border-0 p-12 flex flex-col max-w-[40rem] gap-4 max-lg:px-16 max-sm:px-8">
+                                    <DialogHeader>
+                                        <DialogTitle className="text-sm">
+                                            Enter your email
+                                        </DialogTitle>
+                                        <DialogDescription className="text-[0.65rem]"></DialogDescription>
+                                    </DialogHeader>
+                                    <form
+                                        onSubmit={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            email.current &&
+                                                setDrawerState(false);
+                                            email.current &&
+                                                payWithPayStack(
+                                                    email.current?.value,
+                                                    (100 * cartTotal).toString()
+                                                );
+                                        }}>
+                                        <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-8 w-full [&>div>input]:!text-xs">
+                                            <div className="gap-2 flex flex-col">
+                                                <Input
+                                                    placeholder="Email"
+                                                    // value={title}
+                                                    className="rounded-none !text-xs"
+                                                    ref={email}
+                                                    type="email"
+                                                    required
+                                                />
+                                                <div className="text-[.45rem]">
+                                                    This email will be used to
+                                                    contact you and is very
+                                                    neccesary.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="py-4">
+                                            <div className="flex sm:gap-8 gap-4 justify-end items-center max-sm:justify-between">
+                                                <Button
+                                                    type="submit"
+                                                    className="text-xs max-sm:text-[.65rem] w-min bg-white border-none rounded-none text-black hover:bg-white/80">
+                                                    <ShoppingBasket size={12} />
+                                                    BUY
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </DialogContent>
+                            </Dialog>
                         </div>
                     </>
                 )}
