@@ -70,6 +70,27 @@ export type Database = {
         }
         Relationships: []
       }
+      orders: {
+        Row: {
+          created_at: string
+          customer_data: Json
+          id: number
+          items_ordered: Json
+        }
+        Insert: {
+          created_at?: string
+          customer_data: Json
+          id?: number
+          items_ordered: Json
+        }
+        Update: {
+          created_at?: string
+          customer_data?: Json
+          id?: number
+          items_ordered?: Json
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

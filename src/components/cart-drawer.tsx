@@ -365,14 +365,22 @@ export default function CartDrawer() {
                                         onSubmit={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            if (customerData.email.current) {
-                                                setInnerDialogState(false);
-                                                setDrawerState(false);
-                                                payWithPayStack(
-                                                    customerData.email.current?.value,
-                                                    100 * cartTotal
-                                                );
-                                            }
+                                            setInnerDialogState(false);
+                                            setDrawerState(false);
+                                            payWithPayStack(100 * cartTotal, {
+                                                email:
+                                                    customerData.email.current
+                                                        ?.value ?? "",
+                                                firstName:
+                                                    customerData.firstName
+                                                        .current?.value ?? "",
+                                                lastName:
+                                                    customerData.lastName
+                                                        .current?.value ?? "",
+                                                tel:
+                                                    customerData.tel.current
+                                                        ?.value ?? "",
+                                            });
                                         }}>
                                         <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-8 w-full [&>div>input]:!text-xs">
                                             <div className="gap-2 flex flex-col">

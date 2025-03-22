@@ -515,7 +515,48 @@ export default function ShopItem({
                                                                             ?.value ??
                                                                         "",
                                                                 },
-                                                                
+                                                                async () => {
+                                                                    const data =
+                                                                        {
+                                                                            email: customerData
+                                                                                .email
+                                                                                .current
+                                                                                ?.value ?? "",
+                                                                            firstName:
+                                                                                customerData
+                                                                                    .firstName
+                                                                                    .current
+                                                                                    ?.value ??
+                                                                                "",
+                                                                            lastName:
+                                                                                customerData
+                                                                                    .lastName
+                                                                                    .current
+                                                                                    ?.value ??
+                                                                                "",
+                                                                            tel:
+                                                                                customerData
+                                                                                    .tel
+                                                                                    .current
+                                                                                    ?.value ??
+                                                                                "",
+                                                                        };
+
+                                                                    const item =
+                                                                        {
+                                                                            title: title,
+                                                                            image: image,
+                                                                            price: price,
+                                                                            id: id,
+                                                                            quantity:
+                                                                                quantity,
+                                                                            size: selectedSize,
+                                                                        };
+
+                                                                        const { error } = await supabase
+                                                                        .from('orders')
+                                                                        .insert({items_ordered: [item], customer_data: data})
+                                                                }
                                                             );
                                                         }
                                                     }}>
