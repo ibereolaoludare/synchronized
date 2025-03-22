@@ -67,7 +67,18 @@ export default function ShopItem({
         stock: useRef<HTMLInputElement>(null),
     };
 
-    const email = useRef<HTMLInputElement>(null);
+    const customerData: {
+        firstName: React.RefObject<HTMLInputElement>;
+        lastName: React.RefObject<HTMLInputElement>;
+        email: React.RefObject<HTMLInputElement>;
+        tel: React.RefObject<HTMLInputElement>;
+    } = {
+        firstName: useRef<HTMLInputElement>(null),
+        lastName: useRef<HTMLInputElement>(null),
+        email: useRef<HTMLInputElement>(null),
+        tel: useRef<HTMLInputElement>(null),
+    };
+
     const [quantity, setQuantity] = useState(1);
     const [dialogState, setDialogState] = useState(false);
     const [innerDialogState, setInnerDialogState] = useState(false);
@@ -438,16 +449,29 @@ export default function ShopItem({
                                         />
                                         <Dialog
                                             open={innerDialogState}
-                                            onOpenChange={() =>
-                                                setInnerDialogState(!innerDialogState)
-                                            }>
+                                            onOpenChange={() => {
+                                                if (selectedSize) {
+                                                    setInnerDialogState(
+                                                        !innerDialogState
+                                                    );
+                                                } else if (innerDialogState) {
+                                                    setInnerDialogState(
+                                                        !innerDialogState
+                                                    );
+                                                } else {
+                                                    toast.error(
+                                                        "Please select a size."
+                                                    );
+                                                    return;
+                                                }
+                                            }}>
                                             <DialogTrigger className="flex justify-center items-center p-3 duration-300 gap-2 uppercase text-xs w-full bg-foreground/0 border rounded-none text-foreground hover:text-background hover:bg-foreground/100 max-sm:text-[.65rem]">
                                                 BUY NOW
                                             </DialogTrigger>
                                             <DialogContent className="!rounded-none border-0 p-12 flex flex-col max-w-[40rem] gap-4 max-lg:px-16 max-sm:px-8">
                                                 <DialogHeader>
                                                     <DialogTitle className="text-sm">
-                                                        Enter your email
+                                                        Enter your details
                                                     </DialogTitle>
                                                     <DialogDescription className="text-[0.65rem]"></DialogDescription>
                                                 </DialogHeader>
@@ -455,26 +479,91 @@ export default function ShopItem({
                                                     onSubmit={(e) => {
                                                         e.preventDefault();
                                                         e.stopPropagation();
-                                                        email.current &&
+                                                        customerData.email
+                                                            .current &&
                                                             setDialogState(
                                                                 false
                                                             );
-                                                        email.current &&
+                                                        if (
+                                                            customerData.email
+                                                                .current &&
+                                                            selectedSize
+                                                        ) {
                                                             payWithPayStack(
-                                                                email.current
-                                                                    ?.value,
-                                                                (
-                                                                    100 * price
-                                                                ).toString()
+                                                                100 * price,
+                                                                {
+                                                                    email: customerData
+                                                                        .email
+                                                                        .current
+                                                                        ?.value,
+                                                                    firstName:
+                                                                        customerData
+                                                                            .firstName
+                                                                            .current
+                                                                            ?.value ??
+                                                                        "",
+                                                                    lastName:
+                                                                        customerData
+                                                                            .lastName
+                                                                            .current
+                                                                            ?.value ??
+                                                                        "",
+                                                                    tel:
+                                                                        customerData
+                                                                            .tel
+                                                                            .current
+                                                                            ?.value ??
+                                                                        "",
+                                                                },
+                                                                
                                                             );
+                                                        }
                                                     }}>
                                                     <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-8 w-full [&>div>input]:!text-xs">
+                                                        <div className="gap-2 flex flex-col">
+                                                            <Input
+                                                                placeholder="First Name"
+                                                                // value={title}
+                                                                className="rounded-none !text-xs"
+                                                                ref={
+                                                                    customerData.firstName
+                                                                }
+                                                                type="text"
+                                                                required
+                                                            />
+                                                            <div className="text-[.45rem]">
+                                                                This is your
+                                                                first name and
+                                                                will be used to
+                                                                contact you.
+                                                            </div>
+                                                        </div>
+                                                        <div className="gap-2 flex flex-col">
+                                                            <Input
+                                                                placeholder="Last Name"
+                                                                // value={title}
+                                                                className="rounded-none !text-xs"
+                                                                ref={
+                                                                    customerData.lastName
+                                                                }
+                                                                type="text"
+                                                                required
+                                                            />
+                                                            <div className="text-[.45rem]">
+                                                                This is your
+                                                                last name and
+                                                                will be used to
+                                                                contact you.
+                                                            </div>
+                                                        </div>
                                                         <div className="gap-2 flex flex-col">
                                                             <Input
                                                                 placeholder="Email"
                                                                 // value={title}
                                                                 className="rounded-none !text-xs"
-                                                                ref={email}
+                                                                ref={
+                                                                    customerData.email
+                                                                }
                                                                 type="email"
                                                                 required
                                                             />
@@ -483,6 +572,25 @@ export default function ShopItem({
                                                                 be used to
                                                                 contact you and
                                                                 is very
+                                                                neccesary.
+                                                            </div>
+                                                        </div>
+                                                        <div className="gap-2 flex flex-col">
+                                                            <Input
+                                                                placeholder="Phone No."
+                                                                // value={title}
+                                                                className="rounded-none !text-xs"
+                                                                ref={
+                                                                    customerData.tel
+                                                                }
+                                                                type="tel"
+                                                                required
+                                                            />
+                                                            <div className="text-[.45rem]">
+                                                                This phone
+                                                                number will be
+                                                                used to contact
+                                                                you and is very
                                                                 neccesary.
                                                             </div>
                                                         </div>

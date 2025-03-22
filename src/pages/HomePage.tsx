@@ -140,7 +140,7 @@ export default function HomePage() {
                             )
                         ) : (
                             <div className="absolute text-center inset-48 flex items-center justify-center">
-                                No items here <br /><br /> :(.
+                                No items here <br /><br /> :&#40;.
                             </div>
                         )}
                     </CategoryBody>

@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, PlusCircle, Store, XCircle } from "lucide-react";
+import { ArrowLeft, Newspaper, PlusCircle, Store, XCircle } from "lucide-react";
 import { generateUUID, signOut } from "@/lib/utils";
 import supabase from "@/lib/supabase";
 import LoadingSplash from "@/components/loading-splash";
@@ -23,10 +23,19 @@ import { Category, CategoryBody, CategoryContent } from "@/components/category";
 import ShopItem from "@/components/shop-item";
 import NumberInput from "@/components/number-input";
 import { Database } from "@/lib/supabase-types";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Props {
-    jsxID: "shop";
+    jsxID: "shop" | "orders";
 }
 
 interface ShopProps {
@@ -36,7 +45,7 @@ interface ShopProps {
 export default function DashboardPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
-    const [tab, setTab] = useState<"shop">("shop");
+    const [tab, setTab] = useState<"shop" | "orders">("shop");
     const [catergories, setCategories] = useState<
         undefined | Database["public"]["Tables"]["category"]["Row"][]
     >(undefined);
@@ -64,16 +73,15 @@ export default function DashboardPage() {
                 .from("category")
                 .delete()
                 .eq("name", categoryName);
-        
+
             if (deleteError) {
                 toast.error(`Delete error: ${deleteError.message}`);
             } else {
                 toast.success("Category successfully deleted");
             }
-        
+
             window.location.reload();
         }
-        
 
         async function handleCreateItem(categoryName: string) {
             const itemImage = item.image;
@@ -459,12 +467,37 @@ export default function DashboardPage() {
         }
     }
 
+    function OrdersTab() {
+        return (
+            <>
+                <motion.div
+                    key="loginPage" // Unique key for AnimatePresence
+                    initial={{ opacity: 0 }} // Start invisible
+                    animate={{ opacity: 1 }} // Fade in
+                    exit={{ opacity: 0 }} // Fade out
+                    transition={{ duration: 0.5 }} // Animation duration
+                    className="h-full overflow-y-scroll px-4">
+                    <h1>Orders</h1>
+                    <div className="py-4 h-full">
+                        
+                    </div>
+                </motion.div>
+            </>
+        );
+    }
+
     function DashboardJSX({ jsxID }: Props) {
         switch (jsxID) {
             case "shop":
                 return (
                     <AnimatePresence>
                         <ShopTab hasCategoryPromise={checkCategory} />
+                    </AnimatePresence>
+                );
+            case "orders":
+                return (
+                    <AnimatePresence>
+                        <OrdersTab />
                     </AnimatePresence>
                 );
         }
@@ -523,12 +556,21 @@ export default function DashboardPage() {
                 <div className="border p-8 border-foreground w-3/12 h-full">
                     <h1>Dashboard</h1>
                     <div className="py-4 flex flex-col gap-8">
-                        <Button
-                            onClick={() => setTab("shop")}
-                            className="text-xs bg-white/20 hover:bg-white/40 flex gap-4 items-center justify-start">
-                            <Store />
-                            <span>Shop</span>
-                        </Button>
+                        <div className="flex flex-col gap-4">
+                            <Button
+                                onClick={() => setTab("shop")}
+                                className="text-xs bg-white/20 hover:bg-white/40 flex gap-4 items-center justify-start">
+                                <Store />
+                                <span>Shop</span>
+                            </Button>
+                            <Button
+                                onClick={() => setTab("orders")}
+                                className="text-xs bg-white/20 hover:bg-white/40 flex gap-4 items-center justify-start">
+                                <Newspaper />
+                                <span>Orders</span>
+                            </Button>
+                        </div>
+
                         <div className="w-full">
                             <Button
                                 onClick={() => {

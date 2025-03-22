@@ -57,7 +57,6 @@ export default function CartDrawer() {
     const [innerDialogState, setInnerDialogState] = useState(false);
     const [drawerState, setDrawerState] = useState(false);
     const [isMobile, setIsMobile] = useState<boolean>(false);
-    const email = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         const updateIsMobile = () => {
@@ -72,6 +71,18 @@ export default function CartDrawer() {
     const readCartData = (): CartItem[] => {
         const cartDataString = localStorage.getItem("cart-data");
         return cartDataString ? JSON.parse(cartDataString) : [];
+    };
+
+    const customerData: {
+        firstName: React.RefObject<HTMLInputElement>;
+        lastName: React.RefObject<HTMLInputElement>;
+        email: React.RefObject<HTMLInputElement>;
+        tel: React.RefObject<HTMLInputElement>;
+    } = {
+        firstName: useRef<HTMLInputElement>(null),
+        lastName: useRef<HTMLInputElement>(null),
+        email: useRef<HTMLInputElement>(null),
+        tel: useRef<HTMLInputElement>(null),
     };
 
     const handleDeleteItem = (id: number) => {
@@ -354,22 +365,50 @@ export default function CartDrawer() {
                                         onSubmit={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            if (email.current) {
+                                            if (customerData.email.current) {
                                                 setInnerDialogState(false);
                                                 setDrawerState(false);
                                                 payWithPayStack(
-                                                    email.current?.value,
-                                                    (100 * cartTotal).toString()
+                                                    customerData.email.current?.value,
+                                                    100 * cartTotal
                                                 );
                                             }
                                         }}>
                                         <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-8 w-full [&>div>input]:!text-xs">
                                             <div className="gap-2 flex flex-col">
                                                 <Input
+                                                    placeholder="First Name"
+                                                    // value={title}
+                                                    className="rounded-none !text-xs"
+                                                    ref={customerData.firstName}
+                                                    type="text"
+                                                    required
+                                                />
+                                                <div className="text-[.45rem]">
+                                                    This is your first name and
+                                                    will be used to contact you.
+                                                </div>
+                                            </div>
+                                            <div className="gap-2 flex flex-col">
+                                                <Input
+                                                    placeholder="Last Name"
+                                                    // value={title}
+                                                    className="rounded-none !text-xs"
+                                                    ref={customerData.lastName}
+                                                    type="text"
+                                                    required
+                                                />
+                                                <div className="text-[.45rem]">
+                                                    This is your last name and
+                                                    will be used to contact you.
+                                                </div>
+                                            </div>
+                                            <div className="gap-2 flex flex-col">
+                                                <Input
                                                     placeholder="Email"
                                                     // value={title}
                                                     className="rounded-none !text-xs"
-                                                    ref={email}
+                                                    ref={customerData.email}
                                                     type="email"
                                                     required
                                                 />
@@ -377,6 +416,21 @@ export default function CartDrawer() {
                                                     This email will be used to
                                                     contact you and is very
                                                     neccesary.
+                                                </div>
+                                            </div>
+                                            <div className="gap-2 flex flex-col">
+                                                <Input
+                                                    placeholder="Phone No."
+                                                    // value={title}
+                                                    className="rounded-none !text-xs"
+                                                    ref={customerData.tel}
+                                                    type="tel"
+                                                    required
+                                                />
+                                                <div className="text-[.45rem]">
+                                                    This phone number will be
+                                                    used to contact you and is
+                                                    very neccesary.
                                                 </div>
                                             </div>
                                         </div>

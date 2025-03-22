@@ -21,28 +21,31 @@ export function generateUUID() {
     return crypto.randomUUID();
 }
 
-export async function payWithPayStack(email: string, amount: string) {
+export async function payWithPayStack(
+    amount: number,
+    customerData: {
+        email: string,
+        firstName: string,
+        lastName: string,
+        tel: string,
+    },
+    callback?: () => void
+) {
     try {
-        const response = await fetch(
-            "https://api.paystack.co/transaction/initialize",
-            {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${
-                        import.meta.env.VITE_PUBLIC_SECRET_PAYSTACK_KEY
-                    }`,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, amount }),
-            }
-        );
-
-        const data = await response.json();
-        console.log(data);
-
         const popup = new PaystackPop();
-        popup.resumeTransaction(data.data.access_code);
-        return data;
+        // @ts-ignore
+        popup.newTransaction({
+            key: import.meta.env.VITE_PUBLIC_PUBLIC_PAYSTACK_KEY,
+            email: customerData.email,
+            firstName: customerData.firstName,
+            lastName: customerData.lastName,
+            phone: customerData.tel,
+            amount: amount,
+            onSuccess: (transaction) => {
+                if(transaction.status === "success" && callback)
+                    callback()
+            },
+        });
     } catch (error) {
         console.error("Payment error:", error);
     }
