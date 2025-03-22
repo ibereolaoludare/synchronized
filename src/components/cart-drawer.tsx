@@ -16,7 +16,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { useEffect, useState } from "react";
-import { updateCartData } from "@/lib/utils";
+import { payWithPayStack, updateCartData } from "@/lib/utils";
 import { TextAnimate } from "./magicui/text-animate";
 import { motion } from "framer-motion";
 import { Separator } from "./ui/separator";
@@ -93,6 +93,18 @@ export default function CartDrawer() {
         };
     }, []);
 
+    const [cartTotal, setCartTotal] = useState(0);
+
+    useEffect(() => {
+        let i: number = 0;
+
+        cartItems.forEach((item) => {
+            i += item.price * item.quantity;
+        });
+
+        setCartTotal(i);
+    }, [cartItems]); // Added dependency array
+
     return (
         <Drawer>
             <DrawerTrigger className="shrink-0">
@@ -149,7 +161,8 @@ export default function CartDrawer() {
                                                 </p>
                                             </div>
                                             <p className="text-[.65rem]">
-                                                Price: ${item.price.toFixed(2)}
+                                                Price: NGN{" "}
+                                                {item.price.toFixed(2)}
                                             </p>
                                             <p className="text-[.65rem]">
                                                 Qty: {item.quantity}
@@ -166,7 +179,7 @@ export default function CartDrawer() {
                                         </div>
                                         <div>
                                             Total -{" "}
-                                            {"$" +
+                                            {"NGN " +
                                                 (
                                                     item.price * item.quantity
                                                 ).toFixed(2)}
@@ -175,89 +188,102 @@ export default function CartDrawer() {
                                 </motion.div>
                             ))
                         )}
+                        <div className="text-right text-[.65rem]">
+                            Total: NGN {cartTotal.toFixed(2)}
+                        </div>
                     </div>
                 ) : (
-                    <Table className="[&>*]:text-xs">
-                        {cartItems.length > 0 && (
-                            <TableHeader>
-                                <TableRow className="hover:bg-white/0">
-                                    <TableHead>Product</TableHead>
-                                    <TableHead>Price</TableHead>
-                                    <TableHead>Quantity</TableHead>
-                                    <TableHead className="text-right">
-                                        Total
-                                    </TableHead>
-                                </TableRow>
-                            </TableHeader>
-                        )}
-                        <TableBody className="overflow-scroll">
-                            {cartItems.length === 0 ? (
-                                <TableRow className="hover:bg-black/0">
-                                    <TableCell
-                                        colSpan={4}
-                                        className="text-center p-12">
-                                        <TextAnimate>
-                                            Your cart is empty.
-                                        </TextAnimate>
-                                    </TableCell>
-                                </TableRow>
-                            ) : (
-                                cartItems.map((item) => (
-                                    <motion.tr
-                                        key={item.id}
-                                        className="hover:bg-white/10 h-min"
-                                        initial={{ opacity: 1, height: "auto" }}
-                                        animate={
-                                            removingItem === item.id ||
-                                            removingItem === -1
-                                                ? { opacity: 0, height: 0 }
-                                                : {}
-                                        }
-                                        transition={{
-                                            duration: 0.3,
-                                            ease: "easeInOut",
-                                        }}>
-                                        <TableCell>
-                                            <div className="flex gap-12 max-lg:gap-8 max-md:gap-4 max-sm:gap-2">
-                                                <img
-                                                    src={item.image}
-                                                    alt={item.title}
-                                                    className="h-20"
-                                                />
-                                                <div className="flex flex-col gap-3 text-nowrap max-lg:text-wrap uppercase max-sm:text-[.65rem]">
-                                                    <span>{item.title}</span>
-                                                    <span>
-                                                        Size: {item.size}
-                                                    </span>
-                                                    <div
-                                                        className="text-red-500 cursor-pointer hover:text-red-500/80"
-                                                        onClick={() =>
-                                                            handleDeleteItem(
-                                                                item.id
-                                                            )
-                                                        }>
-                                                        Delete
+                    <>
+                        <Table className="[&>*]:text-xs">
+                            {cartItems.length > 0 && (
+                                <TableHeader>
+                                    <TableRow className="hover:bg-white/0">
+                                        <TableHead>Product</TableHead>
+                                        <TableHead>Price</TableHead>
+                                        <TableHead>Quantity</TableHead>
+                                        <TableHead className="text-right">
+                                            Total
+                                        </TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                            )}
+                            <TableBody className="overflow-scroll">
+                                {cartItems.length === 0 ? (
+                                    <TableRow className="hover:bg-black/0">
+                                        <TableCell
+                                            colSpan={4}
+                                            className="text-center p-12">
+                                            <TextAnimate>
+                                                Your cart is empty.
+                                            </TextAnimate>
+                                        </TableCell>
+                                    </TableRow>
+                                ) : (
+                                    cartItems.map((item) => (
+                                        <motion.tr
+                                            key={item.id}
+                                            className="hover:bg-white/10 h-min"
+                                            initial={{
+                                                opacity: 1,
+                                                height: "auto",
+                                            }}
+                                            animate={
+                                                removingItem === item.id ||
+                                                removingItem === -1
+                                                    ? { opacity: 0, height: 0 }
+                                                    : {}
+                                            }
+                                            transition={{
+                                                duration: 0.3,
+                                                ease: "easeInOut",
+                                            }}>
+                                            <TableCell>
+                                                <div className="flex gap-12 max-lg:gap-8 max-md:gap-4 max-sm:gap-2">
+                                                    <img
+                                                        src={item.image}
+                                                        alt={item.title}
+                                                        className="h-20"
+                                                    />
+                                                    <div className="flex flex-col gap-3 text-nowrap max-lg:text-wrap uppercase max-sm:text-[.65rem]">
+                                                        <span>
+                                                            {item.title}
+                                                        </span>
+                                                        <span>
+                                                            Size: {item.size}
+                                                        </span>
+                                                        <div
+                                                            className="text-red-500 cursor-pointer hover:text-red-500/80"
+                                                            onClick={() =>
+                                                                handleDeleteItem(
+                                                                    item.id
+                                                                )
+                                                            }>
+                                                            Delete
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className=" max-sm:text-[.65rem]">
-                                            ${item.price.toFixed(2)}
-                                        </TableCell>
-                                        <TableCell className="max-sm:text-[.65rem]">
-                                            {item.quantity}
-                                        </TableCell>
-                                        <TableCell className="text-right max-sm:text-[.65rem]">
-                                            $
-                                            {(
-                                                item.price * item.quantity
-                                            ).toFixed(2)}
-                                        </TableCell>
-                                    </motion.tr>
-                                ))
-                            )}
-                        </TableBody>
-                    </Table>
+                                            </TableCell>
+                                            <TableCell className=" max-sm:text-[.65rem]">
+                                                NGN {item.price.toFixed(2)}
+                                            </TableCell>
+                                            <TableCell className="max-sm:text-[.65rem]">
+                                                {item.quantity}
+                                            </TableCell>
+                                            <TableCell className="text-right max-sm:text-[.65rem]">
+                                                NGN
+                                                {(
+                                                    item.price * item.quantity
+                                                ).toFixed(2)}
+                                            </TableCell>
+                                        </motion.tr>
+                                    ))
+                                )}
+                            </TableBody>
+                        </Table>
+                        <div className="text-right text-xs w-full pt-2">
+                            Total: NGN {cartTotal.toFixed(2)}
+                        </div>
+                    </>
                 )}
                 {cartItems.length > 0 && (
                     <>
@@ -285,10 +311,19 @@ export default function CartDrawer() {
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
                             </AlertDialog>
-                            <Button className="uppercase text-xs max-sm:text-[.65rem] w-min bg-white border-none rounded-none text-black hover:bg-white/80">
-                                Checkout
-                                <ArrowRight />
-                            </Button>
+                            <DrawerClose>
+                                <Button
+                                    onClick={() =>
+                                        payWithPayStack(
+                                            "test@gmail.com",
+                                            (cartTotal * 100).toString()
+                                        )
+                                    }
+                                    className="uppercase text-xs max-sm:text-[.65rem] w-min bg-white border-none rounded-none text-black hover:bg-white/80">
+                                    Checkout
+                                    <ArrowRight />
+                                </Button>
+                            </DrawerClose>
                         </div>
                     </>
                 )}

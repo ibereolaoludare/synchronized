@@ -17,7 +17,7 @@ import {
 } from "./ui/dialog";
 import AddToCart from "./add-to-cart";
 import { useRef, useState } from "react";
-import { Pencil, XCircle } from "lucide-react";
+import { Pencil, ShoppingBasket, XCircle } from "lucide-react";
 import NumberInput from "./number-input";
 import { Input } from "./ui/input";
 import { DialogDescription } from "@radix-ui/react-dialog";
@@ -33,6 +33,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "./ui/alert-dialog";
+import { payWithPayStack } from "@/lib/utils";
 
 interface Props {
     image: string;
@@ -65,7 +66,11 @@ export default function ShopItem({
         price: useRef<HTMLInputElement>(null),
         stock: useRef<HTMLInputElement>(null),
     };
+
+    const email = useRef<HTMLInputElement>(null);
     const [quantity, setQuantity] = useState(1);
+    const [dialogState, setDialogState] = useState(false);
+    const [innerDialogState, setInnerDialogState] = useState(false);
     const [itemName, setItemName] = useState(title);
 
     async function handleEditItem(
@@ -161,7 +166,9 @@ export default function ShopItem({
                 src={image}
                 className="max-h-40 duration-300"
             />
-            <Dialog>
+            <Dialog
+                open={dialogState}
+                onOpenChange={() => setDialogState(!dialogState)}>
                 <DialogTrigger
                     onMouseDown={() => {
                         setSelectedSize(undefined);
@@ -180,7 +187,7 @@ export default function ShopItem({
                             )}
                             <span>{title}</span>
                         </h1>
-                        <h2>${price}</h2>
+                        <h2>NGN {price}</h2>
                     </div>
                 </DialogTrigger>
                 {editable ? (
@@ -199,7 +206,7 @@ export default function ShopItem({
                                         {title}
                                     </DialogTitle>
                                     <h2 className="text-xs max-sm:text-[.65rem] text-gray-300">
-                                        ${price}
+                                        NGN {price}
                                     </h2>
                                 </DialogHeader>
                                 <div className="flex flex-col gap-4">
@@ -348,7 +355,7 @@ export default function ShopItem({
                                         {title}
                                     </DialogTitle>
                                     <h2 className="text-xs max-sm:text-[.65rem] text-gray-300">
-                                        ${price}
+                                        NGN {price}
                                     </h2>
                                 </DialogHeader>
                                 <div className="flex flex-col gap-4">
@@ -429,9 +436,72 @@ export default function ShopItem({
                                                 size: selectedSize,
                                             }}
                                         />
-                                        <Button className="uppercase text-xs w-full bg-transparent border rounded-none hover:text-black text-white hover:bg-white max-sm:text-[.65rem]">
-                                            BUY NOW
-                                        </Button>
+                                        <Dialog
+                                            open={innerDialogState}
+                                            onOpenChange={() =>
+                                                setInnerDialogState(!innerDialogState)
+                                            }>
+                                            <DialogTrigger className="flex justify-center items-center p-3 duration-300 gap-2 uppercase text-xs w-full bg-foreground/0 border rounded-none text-foreground hover:text-background hover:bg-foreground/100 max-sm:text-[.65rem]">
+                                                BUY NOW
+                                            </DialogTrigger>
+                                            <DialogContent className="!rounded-none border-0 p-12 flex flex-col max-w-[40rem] gap-4 max-lg:px-16 max-sm:px-8">
+                                                <DialogHeader>
+                                                    <DialogTitle className="text-sm">
+                                                        Enter your email
+                                                    </DialogTitle>
+                                                    <DialogDescription className="text-[0.65rem]"></DialogDescription>
+                                                </DialogHeader>
+                                                <form
+                                                    onSubmit={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        email.current &&
+                                                            setDialogState(
+                                                                false
+                                                            );
+                                                        email.current &&
+                                                            payWithPayStack(
+                                                                email.current
+                                                                    ?.value,
+                                                                (
+                                                                    100 * price
+                                                                ).toString()
+                                                            );
+                                                    }}>
+                                                    <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-8 w-full [&>div>input]:!text-xs">
+                                                        <div className="gap-2 flex flex-col">
+                                                            <Input
+                                                                placeholder="Email"
+                                                                // value={title}
+                                                                className="rounded-none !text-xs"
+                                                                ref={email}
+                                                                type="email"
+                                                                required
+                                                            />
+                                                            <div className="text-[.45rem]">
+                                                                This email will
+                                                                be used to
+                                                                contact you and
+                                                                is very
+                                                                neccesary.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="py-4">
+                                                        <div className="flex sm:gap-8 gap-4 justify-end items-center max-sm:justify-between">
+                                                            <Button
+                                                                type="submit"
+                                                                className="text-xs max-sm:text-[.65rem] w-min bg-white border-none rounded-none text-black hover:bg-white/80">
+                                                                <ShoppingBasket
+                                                                    size={12}
+                                                                />
+                                                                BUY
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </DialogContent>
+                                        </Dialog>
                                     </div>
                                 </div>
                             </div>

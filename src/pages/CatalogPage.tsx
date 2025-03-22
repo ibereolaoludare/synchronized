@@ -63,7 +63,7 @@ export default function CatalogPage() {
                                 <CategoryTitle>{category.name}</CategoryTitle>
                             </CategoryHeader>
                             <CategoryBody>
-                                {category.items &&
+                                {category.items ?
                                     // @ts-ignore
                                     category.items.map(
                                         // @ts-ignore
@@ -85,6 +85,10 @@ export default function CatalogPage() {
                                                 />
                                             );
                                         }
+                                    ) : (
+                                        <div className="absolute text-center inset-48 flex items-center justify-center">
+                                            No items here <br /><br /> :(.
+                                        </div>
                                     )}
                             </CategoryBody>
                         </CategoryContent>
