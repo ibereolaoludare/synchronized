@@ -489,6 +489,30 @@ export default function ShopItem({
                                                                 .current &&
                                                             selectedSize
                                                         ) {
+                                                            const data = {
+                                                                email: customerData
+                                                                    .email
+                                                                    .current
+                                                                    ?.value,
+                                                                firstName:
+                                                                    customerData
+                                                                        .firstName
+                                                                        .current
+                                                                        ?.value ??
+                                                                    "",
+                                                                lastName:
+                                                                    customerData
+                                                                        .lastName
+                                                                        .current
+                                                                        ?.value ??
+                                                                    "",
+                                                                tel:
+                                                                    customerData
+                                                                        .tel
+                                                                        .current
+                                                                        ?.value ??
+                                                                    "",
+                                                            };
                                                             payWithPayStack(
                                                                 100 * price,
                                                                 {
@@ -516,32 +540,6 @@ export default function ShopItem({
                                                                         "",
                                                                 },
                                                                 async () => {
-                                                                    const data =
-                                                                        {
-                                                                            email: customerData
-                                                                                .email
-                                                                                .current
-                                                                                ?.value ?? "",
-                                                                            firstName:
-                                                                                customerData
-                                                                                    .firstName
-                                                                                    .current
-                                                                                    ?.value ??
-                                                                                "",
-                                                                            lastName:
-                                                                                customerData
-                                                                                    .lastName
-                                                                                    .current
-                                                                                    ?.value ??
-                                                                                "",
-                                                                            tel:
-                                                                                customerData
-                                                                                    .tel
-                                                                                    .current
-                                                                                    ?.value ??
-                                                                                "",
-                                                                        };
-
                                                                     const item =
                                                                         {
                                                                             title: title,
@@ -553,9 +551,30 @@ export default function ShopItem({
                                                                             size: selectedSize,
                                                                         };
 
-                                                                        const { error } = await supabase
-                                                                        .from('orders')
-                                                                        .insert({items_ordered: [item], customer_data: data})
+                                                                    const {
+                                                                        error,
+                                                                    } =
+                                                                        await supabase
+                                                                            .from(
+                                                                                "orders"
+                                                                            )
+                                                                            .insert(
+                                                                                {
+                                                                                    items_ordered:
+                                                                                        [
+                                                                                            item,
+                                                                                        ],
+                                                                                    customer_data:
+                                                                                        data,
+                                                                                }
+                                                                            );
+
+                                                                            if (error) {
+                                                                                console.error(
+                                                                                    "Error inserting order:",
+                                                                                    error.message
+                                                                        );
+                                                                    }
                                                                 }
                                                             );
                                                         }
