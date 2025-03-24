@@ -357,7 +357,7 @@ export default function CartDrawer() {
                                 <DialogContent className="!rounded-none border-0 p-12 flex flex-col max-w-[40rem] gap-4 max-lg:px-16 max-sm:px-8">
                                     <DialogHeader>
                                         <DialogTitle className="text-sm">
-                                            Enter your email
+                                            Enter your details
                                         </DialogTitle>
                                         <DialogDescription className="text-[0.65rem]"></DialogDescription>
                                     </DialogHeader>

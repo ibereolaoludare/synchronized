@@ -33,6 +33,12 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface Props {
     jsxID: "shop" | "orders";
@@ -468,6 +474,35 @@ export default function DashboardPage() {
     }
 
     function OrdersTab() {
+        const [orders, setOrders] = useState<
+            null | Database["public"]["Tables"]["orders"]["Row"][]
+        >(null);
+
+        async function getOrders() {
+            try {
+                const { data, error } = await supabase
+                    .from("orders")
+                    .select("*"); // Selects all columns
+
+                if (error) {
+                    console.error("Error fetching orders:", error.message);
+                    return null;
+                }
+
+                setOrders(data);
+                return data;
+            } catch (error) {
+                console.error("Unexpected error fetching orders:", error);
+                return null;
+            }
+        }
+
+        useEffect(() => {
+            getOrders();
+        }, []);
+
+        console.log(orders);
+
         return (
             <>
                 <motion.div
@@ -479,7 +514,156 @@ export default function DashboardPage() {
                     className="h-full overflow-y-scroll px-4">
                     <h1>Orders</h1>
                     <div className="py-4 h-full">
-                        
+                        {orders &&
+                            orders.map((order) => (
+                                <Accordion
+                                    type="single"
+                                    collapsible>
+                                    <AccordionItem
+                                        value={order.id.toString()}
+                                        className="border-0 [&>*]:text-xs">
+                                        <AccordionTrigger className="hover:no-underline bg-foreground/20 px-4 hover:bg-transparent hover:outline hover:outline-foreground duration-300">
+                                            Order #{order.id}
+                                        </AccordionTrigger>
+                                        <AccordionContent className="p-4">
+                                            <div className="text-sm">
+                                                <h2>Customer Information</h2>
+                                                <div className="grid grid-cols-2 grid-rows-2 gap-8 max-lg:grid-cols-1 max-lg:gap-4 text-xs py-4">
+                                                    <div className="flex flex-col gap-2">
+                                                        <span className="font-semibold">
+                                                            Name:
+                                                        </span>
+                                                        <span>
+                                                            {
+                                                                // @ts-ignore
+                                                                `${order.customer_data.firstName} ${order.customer_data.lastName}`
+                                                            }
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex flex-col gap-2">
+                                                        <span className="font-semibold">
+                                                            Email:
+                                                        </span>
+                                                        <span>
+                                                            {
+                                                                // @ts-ignore
+                                                                `${order.customer_data.email}`
+                                                            }
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex flex-col gap-2">
+                                                        <span className="font-semibold">
+                                                            Phone No:
+                                                        </span>
+                                                        <span>
+                                                            {
+                                                                // @ts-ignore
+                                                                `${order.customer_data.tel}`
+                                                            }
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex flex-col gap-2">
+                                                        <span className="font-semibold">
+                                                            Reference:
+                                                        </span>
+                                                        <span className="uppercase">
+                                                            {
+                                                                // @ts-ignore
+                                                                `${order.customer_data.reference}`
+                                                            }
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h2 className="text-sm pt-8 pb-2">
+                                                    Items Ordered -{" "}
+                                                    {
+                                                        //@ts-ignore
+                                                        //@ts-ignore
+                                                        order.items_ordered
+                                                            .length
+                                                    }{" "}
+                                                    item&#40;s&#41;
+                                                </h2>
+                                                <div className="grid grid-cols-2 max-lg:grid-cols-1 text-xs gap-2 py-4">
+                                                    {order.items_ordered &&
+                                                        //@ts-ignore
+                                                        order.items_ordered.map(
+                                                            //@ts-ignore
+                                                            (item) => (
+                                                                <motion.div
+                                                                    key={
+                                                                        item.id
+                                                                    }
+                                                                    className="flex-col gap-4 items-center p-4 cursor-pointer bg-white/10 hover:bg-white/20"
+                                                                    initial={{
+                                                                        opacity: 1,
+                                                                        height: "auto",
+                                                                    }}
+                                                                    transition={{
+                                                                        duration: 0.3,
+                                                                        ease: "easeInOut",
+                                                                    }}>
+                                                                    <div className="flex gap-4 h-max">
+                                                                        <img
+                                                                            src={
+                                                                                item.image
+                                                                            }
+                                                                            alt={
+                                                                                item.title
+                                                                            }
+                                                                            className="h-16"
+                                                                        />
+                                                                        <div className="flex flex-col h-full justify-between">
+                                                                            <div>
+                                                                                <p className="text-[.65rem] uppercase">
+                                                                                    {
+                                                                                        item.title
+                                                                                    }{" "}
+                                                                                    -{" "}
+                                                                                    {
+                                                                                        item.size
+                                                                                    }
+                                                                                </p>
+                                                                            </div>
+                                                                            <p className="text-[.65rem]">
+                                                                                Price:
+                                                                                NGN{" "}
+                                                                                {item.price.toFixed(
+                                                                                    2
+                                                                                )}
+                                                                            </p>
+                                                                            <p className="text-[.65rem]">
+                                                                                Qty:{" "}
+                                                                                {
+                                                                                    item.quantity
+                                                                                }
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="text-[.65rem] items-end flex justify-between pt-4">
+                                                                        <div>
+                                                                            Total
+                                                                            -{" "}
+                                                                            {"NGN " +
+                                                                                (
+                                                                                    item.price *
+                                                                                    item.quantity
+                                                                                ).toFixed(
+                                                                                    2
+                                                                                )}
+                                                                        </div>
+                                                                    </div>
+                                                                </motion.div>
+                                                            )
+                                                        )}
+                                                </div>
+                                            </div>
+                                        </AccordionContent>
+                                    </AccordionItem>
+                                </Accordion>
+                            ))}
                     </div>
                 </motion.div>
             </>
