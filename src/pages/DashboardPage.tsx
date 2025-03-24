@@ -513,7 +513,7 @@ export default function DashboardPage() {
                     transition={{ duration: 0.5 }} // Animation duration
                     className="h-full overflow-y-scroll px-4">
                     <h1>Orders</h1>
-                    <div className="py-4 h-full">
+                    <div className="py-4 h-full flex flex-col gap-8">
                         {orders &&
                             orders.map((order) => (
                                 <Accordion
