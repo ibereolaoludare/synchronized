@@ -580,8 +580,8 @@ export default function DashboardPage() {
                                                     Items Ordered -{" "}
                                                     {
                                                         //@ts-ignore
-                                                        //@ts-ignore
                                                         order.items_ordered
+                                                        //@ts-ignore
                                                             .length
                                                     }{" "}
                                                     item&#40;s&#41;
