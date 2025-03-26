@@ -39,6 +39,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
+import CheckIcon from "@/components/check-icon";
 
 interface Props {
     jsxID: "shop" | "orders";
@@ -489,8 +490,8 @@ export default function DashboardPage() {
                     return null;
                 }
 
+                if (orders === data) return data;
                 setOrders(data);
-                return data;
             } catch (error) {
                 console.error("Unexpected error fetching orders:", error);
                 return null;
@@ -499,9 +500,8 @@ export default function DashboardPage() {
 
         useEffect(() => {
             getOrders();
+            setInterval(getOrders, 5000);
         }, []);
-
-        console.log(orders);
 
         return (
             <>
@@ -658,6 +658,74 @@ export default function DashboardPage() {
                                                                 </motion.div>
                                                             )
                                                         )}
+                                                </div>
+                                                <div className="flex justify-end w-full">
+                                                    <AlertDialog>
+                                                        <AlertDialogTrigger className="uppercase w-min text-xs bg-emerald-500 p-3 rounded-none flex items-center justify-center gap-2 hover:text-foreground text-foreground hover:bg-emerald-800 max-sm:text-[.65rem]">
+                                                            <CheckIcon
+                                                                height={24}
+                                                                width={24}
+                                                            />
+                                                            Done
+                                                        </AlertDialogTrigger>
+                                                        <AlertDialogContent className="!rounded-none border-0 p-12 gap-12">
+                                                            <AlertDialogHeader className="[&>*]:text-xs">
+                                                                <AlertDialogTitle>
+                                                                    Done with
+                                                                    this order?
+                                                                </AlertDialogTitle>
+                                                                <div className="text-xs">
+                                                                    This will
+                                                                    delete the
+                                                                    order.
+                                                                </div>
+                                                            </AlertDialogHeader>
+                                                            <AlertDialogFooter className="[&>*]:text-xs gap-4">
+                                                                <AlertDialogCancel className="uppercase text-xs w-min bg-white border-none rounded-none text-black hover:bg-white/80">
+                                                                    Cancel
+                                                                </AlertDialogCancel>
+                                                                <AlertDialogAction
+                                                                    onClick={async () => {
+                                                                        const response =
+                                                                            await supabase
+                                                                                .from(
+                                                                                    "orders"
+                                                                                )
+                                                                                .delete()
+                                                                                .eq(
+                                                                                    "id",
+                                                                                    order.id
+                                                                                );
+
+                                                                        if (
+                                                                            response.status ==
+                                                                            204
+                                                                        ) {
+                                                                            toast.success(
+                                                                                "Order deleted successfully"
+                                                                            );
+
+                                                                            setTimeout(
+                                                                                () =>
+                                                                                    window.location.reload(),
+                                                                                1500
+                                                                            );
+                                                                        }
+                                                                    }}
+                                                                    className="uppercase text-xs w-min text-nowrap bg-white text-emerald-500 border-none rounded-none hover:bg-white/80">
+                                                                    <CheckIcon
+                                                                        height={
+                                                                            24
+                                                                        }
+                                                                        width={
+                                                                            24
+                                                                        }
+                                                                    />
+                                                                    Done
+                                                                </AlertDialogAction>
+                                                            </AlertDialogFooter>
+                                                        </AlertDialogContent>
+                                                    </AlertDialog>
                                                 </div>
                                             </div>
                                         </AccordionContent>
