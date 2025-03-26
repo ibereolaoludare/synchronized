@@ -749,7 +749,7 @@ export default function DashboardPage() {
                         animate={{ opacity: 1 }} // Fade in
                         exit={{ opacity: 0 }} // Fade out
                         transition={{ duration: 0.5 }} // Animation duration
-                        className="h-full overflow-y-scroll px-4 flex items-center justify-center">
+                        className="h-full overflow-y-scroll px-4 flex items-center justify-center text-center">
                         No orders have been made yet.
                     </motion.div>
                 )}
