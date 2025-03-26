@@ -40,6 +40,7 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import CheckIcon from "@/components/check-icon";
+import { HamburgerIcon } from "@/components/sliding-menu";
 
 interface Props {
     jsxID: "shop" | "orders";
@@ -52,6 +53,7 @@ interface ShopProps {
 export default function DashboardPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [tab, setTab] = useState<"shop" | "orders">("shop");
     const [catergories, setCategories] = useState<
         undefined | Database["public"]["Tables"]["category"]["Row"][]
@@ -748,8 +750,8 @@ export default function DashboardPage() {
                         exit={{ opacity: 0 }} // Fade out
                         transition={{ duration: 0.5 }} // Animation duration
                         className="h-full overflow-y-scroll px-4 flex items-center justify-center">
-                            No orders have been made yet.
-                        </motion.div>
+                        No orders have been made yet.
+                    </motion.div>
                 )}
             </>
         );
@@ -810,36 +812,52 @@ export default function DashboardPage() {
 
     return (
         <motion.div
-            key="loginPage" // Unique key for AnimatePresence
-            initial={{ opacity: 0 }} // Start invisible
-            animate={{ opacity: 1 }} // Fade in
-            exit={{ opacity: 0 }} // Fade out
-            transition={{ duration: 0.5 }} // Animation duration
-        >
+            key="loginPage"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}>
             <Particles
                 className="h-screen fixed w-screen"
                 quantity={50}
             />
             <Header onlyBrand={true} />
             <div className="px-4 max-xl:px-3 max-lg:px-2 gap-4 max-sm:px-1 flex items-center h-[80vh]">
-                <div className="border p-8 border-foreground w-3/12 h-full">
+                {/* Sidebar Toggle State */}
+                <div className="lg:hidden absolute top-8 left-4 z-50">
+                    <HamburgerIcon
+                        isOpen={sidebarOpen}
+                        onClick={() => setSidebarOpen(!sidebarOpen)}
+                    />
+                </div>
+
+                {/* Fullscreen Sidebar */}
+                <div
+                    className={`fixed top-0 left-0 w-screen h-screen bg-background z-50 transition-transform duration-300 ${
+                        sidebarOpen ? "translate-x-0" : "-translate-x-full"
+                    } lg:static lg:w-3/12 lg:h-full lg:translate-x-0 border border-foreground p-8`}>
                     <h1>Dashboard</h1>
                     <div className="py-4 flex flex-col gap-8">
                         <div className="flex flex-col gap-4">
                             <Button
-                                onClick={() => setTab("shop")}
+                                onClick={() => {
+                                    setTab("shop");
+                                    setSidebarOpen(false);
+                                }}
                                 className="text-xs bg-white/20 hover:bg-white/40 flex gap-4 items-center justify-start">
                                 <Store />
                                 <span>Shop</span>
                             </Button>
                             <Button
-                                onClick={() => setTab("orders")}
+                                onClick={() => {
+                                    setTab("orders");
+                                    setSidebarOpen(false);
+                                }}
                                 className="text-xs bg-white/20 hover:bg-white/40 flex gap-4 items-center justify-start">
                                 <Newspaper />
                                 <span>Orders</span>
                             </Button>
                         </div>
-
                         <div className="w-full">
                             <Button
                                 onClick={() => {
@@ -853,7 +871,16 @@ export default function DashboardPage() {
                             </Button>
                         </div>
                     </div>
+                    {/* Close Sidebar Button */}
+                    <div className="lg:hidden absolute top-4 right-4">
+                        <HamburgerIcon
+                            isOpen={sidebarOpen}
+                            onClick={() => setSidebarOpen(!sidebarOpen)}
+                        />
+                    </div>
                 </div>
+
+                {/* Main Content */}
                 <div className="border border-foreground w-full h-full p-8">
                     <AnimatePresence>
                         <DashboardJSX jsxID={tab} />
@@ -862,12 +889,7 @@ export default function DashboardPage() {
             </div>
             <Toaster
                 position="top-left"
-                toastOptions={{
-                    style: {
-                        borderRadius: 0,
-                        fontSize: "10px",
-                    },
-                }}
+                toastOptions={{ style: { borderRadius: 0, fontSize: "10px" } }}
             />
         </motion.div>
     );

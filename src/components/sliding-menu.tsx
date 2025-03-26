@@ -46,19 +46,24 @@ export const SlidingMenuProvider: React.FC<SlidingMenuProviderProps> = ({
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+            if (
+                menuRef.current && 
+                !menuRef.current.contains(event.target as Node) &&
+                !(event.target as HTMLElement).closest(".hamburger-icon") // Ignore clicks on the icon
+            ) {
                 closeMenu();
             }
         };
-
+    
         if (isOpen) {
             document.addEventListener("mousedown", handleClickOutside);
         }
-
+    
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [isOpen]);
+    
 
     return (
         <SlidingMenuContext.Provider value={{ isOpen, toggleMenu, closeMenu }}>
@@ -68,14 +73,14 @@ export const SlidingMenuProvider: React.FC<SlidingMenuProviderProps> = ({
     );
 };
 
-const HamburgerIcon: React.FC<{ isOpen: boolean; onClick: () => void }> = ({
+export const HamburgerIcon: React.FC<{ isOpen: boolean; onClick?: () => void }> = ({
     isOpen,
     onClick,
 }) => {
     return (
         <motion.div
             onClick={onClick}
-            className="cursor-pointer w-8 h-8 flex flex-col items-center justify-center gap-1.5">
+            className="cursor-pointer w-8 h-8 flex flex-col items-center justify-center gap-1.5 hamburger-icon">
             <motion.div
                 initial={false}
                 animate={{ rotate: isOpen ? 45 : 0, y: isOpen ? 8 : 0, }}
