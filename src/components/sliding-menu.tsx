@@ -4,6 +4,7 @@ import {
     useState,
     ReactNode,
     useEffect,
+    useRef
 } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -27,6 +28,8 @@ export const SlidingMenuProvider: React.FC<SlidingMenuProviderProps> = ({
     children,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const menuRef = useRef<HTMLDivElement | null>(null);
+
     const toggleMenu = () => setIsOpen(!isOpen);
     const closeMenu = () => setIsOpen(false);
 
@@ -41,10 +44,26 @@ export const SlidingMenuProvider: React.FC<SlidingMenuProviderProps> = ({
         };
     }, [isOpen]);
 
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                closeMenu();
+            }
+        };
+
+        if (isOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isOpen]);
+
     return (
         <SlidingMenuContext.Provider value={{ isOpen, toggleMenu, closeMenu }}>
             {children}
-            <SlidingMenu />
+            <SlidingMenu menuRef={menuRef} />
         </SlidingMenuContext.Provider>
     );
 };
@@ -91,7 +110,7 @@ export const SlidingMenuTrigger: React.FC = () => {
     );
 };
 
-const SlidingMenu: React.FC = () => {
+const SlidingMenu: React.FC<{ menuRef: React.RefObject<HTMLDivElement> }> = ({ menuRef }) => {
     const context = useContext(SlidingMenuContext);
     if (!context)
         throw new Error(
@@ -103,6 +122,7 @@ const SlidingMenu: React.FC = () => {
         <AnimatePresence>
             {isOpen && (
                 <motion.div
+                    ref={menuRef}
                     initial={{ y: "-100%" }}
                     animate={{ y: 0 }}
                     exit={{ y: "-100%" }}
