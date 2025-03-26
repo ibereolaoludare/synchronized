@@ -504,235 +504,253 @@ export default function DashboardPage() {
 
         return (
             <>
-                <motion.div
-                    key="loginPage" // Unique key for AnimatePresence
-                    initial={{ opacity: 0 }} // Start invisible
-                    animate={{ opacity: 1 }} // Fade in
-                    exit={{ opacity: 0 }} // Fade out
-                    transition={{ duration: 0.5 }} // Animation duration
-                    className="h-full overflow-y-scroll px-4">
-                    <h1>Orders</h1>
-                    <div className="py-4 h-full flex flex-col gap-8">
-                        {orders &&
-                            orders.map((order) => (
-                                <Accordion
-                                    type="single"
-                                    collapsible>
-                                    <AccordionItem
-                                        value={order.id.toString()}
-                                        className="border-0 [&>*]:text-xs">
-                                        <AccordionTrigger className="hover:no-underline bg-foreground/20 px-4 hover:bg-transparent hover:outline hover:outline-foreground duration-300">
-                                            Order #{order.id}
-                                        </AccordionTrigger>
-                                        <AccordionContent className="p-4">
-                                            <div className="text-sm">
-                                                <h2>Customer Information</h2>
-                                                <div className="grid grid-cols-2 grid-rows-2 gap-8 max-lg:grid-cols-1 max-lg:gap-4 text-xs py-4">
-                                                    <div className="flex flex-col gap-2">
-                                                        <span className="font-semibold">
-                                                            Name:
-                                                        </span>
-                                                        <span>
-                                                            {
-                                                                // @ts-ignore
-                                                                `${order.customer_data.firstName} ${order.customer_data.lastName}`
-                                                            }
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex flex-col gap-2">
-                                                        <span className="font-semibold">
-                                                            Email:
-                                                        </span>
-                                                        <span>
-                                                            {
-                                                                // @ts-ignore
-                                                                `${order.customer_data.email}`
-                                                            }
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex flex-col gap-2">
-                                                        <span className="font-semibold">
-                                                            Phone No:
-                                                        </span>
-                                                        <span>
-                                                            {
-                                                                // @ts-ignore
-                                                                `${order.customer_data.tel}`
-                                                            }
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex flex-col gap-2">
-                                                        <span className="font-semibold">
-                                                            Reference:
-                                                        </span>
-                                                        <span className="uppercase">
-                                                            {
-                                                                // @ts-ignore
-                                                                `${order.customer_data.reference}`
-                                                            }
-                                                        </span>
+                {orders && (orders.length !== 0 || orders === null) ? (
+                    <motion.div
+                        key="loginPage" // Unique key for AnimatePresence
+                        initial={{ opacity: 0 }} // Start invisible
+                        animate={{ opacity: 1 }} // Fade in
+                        exit={{ opacity: 0 }} // Fade out
+                        transition={{ duration: 0.5 }} // Animation duration
+                        className="h-full overflow-y-scroll px-4">
+                        <h1>Orders</h1>
+                        <div className="py-4 h-full flex flex-col gap-8">
+                            {orders &&
+                                orders.map((order) => (
+                                    <Accordion
+                                        type="single"
+                                        collapsible>
+                                        <AccordionItem
+                                            value={order.id.toString()}
+                                            className="border-0 [&>*]:text-xs">
+                                            <AccordionTrigger className="hover:no-underline bg-foreground/20 px-4 hover:bg-transparent hover:outline hover:outline-foreground duration-300">
+                                                Order #{order.id}
+                                            </AccordionTrigger>
+                                            <AccordionContent className="p-4">
+                                                <div className="text-sm">
+                                                    <h2>
+                                                        Customer Information
+                                                    </h2>
+                                                    <div className="grid grid-cols-2 grid-rows-2 gap-8 max-lg:grid-cols-1 max-lg:gap-4 text-xs py-4">
+                                                        <div className="flex flex-col gap-2">
+                                                            <span className="font-semibold">
+                                                                Name:
+                                                            </span>
+                                                            <span>
+                                                                {
+                                                                    // @ts-ignore
+                                                                    `${order.customer_data.firstName} ${order.customer_data.lastName}`
+                                                                }
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex flex-col gap-2">
+                                                            <span className="font-semibold">
+                                                                Email:
+                                                            </span>
+                                                            <span>
+                                                                {
+                                                                    // @ts-ignore
+                                                                    `${order.customer_data.email}`
+                                                                }
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex flex-col gap-2">
+                                                            <span className="font-semibold">
+                                                                Phone No:
+                                                            </span>
+                                                            <span>
+                                                                {
+                                                                    // @ts-ignore
+                                                                    `${order.customer_data.tel}`
+                                                                }
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex flex-col gap-2">
+                                                            <span className="font-semibold">
+                                                                Reference:
+                                                            </span>
+                                                            <span className="uppercase">
+                                                                {
+                                                                    // @ts-ignore
+                                                                    `${order.customer_data.reference}`
+                                                                }
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div>
-                                                <h2 className="text-sm pt-8 pb-2">
-                                                    Items Ordered -{" "}
-                                                    {
-                                                        //@ts-ignore
-                                                        order.items_ordered
-                                                        //@ts-ignore
-                                                            .length
-                                                    }{" "}
-                                                    item&#40;s&#41;
-                                                </h2>
-                                                <div className="grid grid-cols-2 max-lg:grid-cols-1 text-xs gap-4 py-4">
-                                                    {order.items_ordered &&
-                                                        //@ts-ignore
-                                                        order.items_ordered.map(
+                                                <div>
+                                                    <h2 className="text-sm pt-8 pb-2">
+                                                        Items Ordered -{" "}
+                                                        {
                                                             //@ts-ignore
-                                                            (item) => (
-                                                                <motion.div
-                                                                    key={
-                                                                        item.id
-                                                                    }
-                                                                    className="flex-col gap-4 items-center p-4 cursor-pointer bg-white/10 hover:bg-white/20"
-                                                                    initial={{
-                                                                        opacity: 1,
-                                                                        height: "auto",
-                                                                    }}
-                                                                    transition={{
-                                                                        duration: 0.3,
-                                                                        ease: "easeInOut",
-                                                                    }}>
-                                                                    <div className="flex gap-4 h-max">
-                                                                        <img
-                                                                            src={
-                                                                                item.image
-                                                                            }
-                                                                            alt={
-                                                                                item.title
-                                                                            }
-                                                                            className="h-16"
-                                                                        />
-                                                                        <div className="flex flex-col h-full justify-between">
-                                                                            <div>
-                                                                                <p className="text-[.65rem] uppercase">
+                                                            order.items_ordered
+                                                            //@ts-ignore
+                                                                .length
+                                                        }{" "}
+                                                        item&#40;s&#41;
+                                                    </h2>
+                                                    <div className="grid grid-cols-2 max-lg:grid-cols-1 text-xs gap-4 py-4">
+                                                        {order.items_ordered &&
+                                                            //@ts-ignore
+                                                            order.items_ordered.map(
+                                                                //@ts-ignore
+                                                                (item) => (
+                                                                    <motion.div
+                                                                        key={
+                                                                            item.id
+                                                                        }
+                                                                        className="flex-col gap-4 items-center p-4 cursor-pointer bg-white/10 hover:bg-white/20"
+                                                                        initial={{
+                                                                            opacity: 1,
+                                                                            height: "auto",
+                                                                        }}
+                                                                        transition={{
+                                                                            duration: 0.3,
+                                                                            ease: "easeInOut",
+                                                                        }}>
+                                                                        <div className="flex gap-4 h-max">
+                                                                            <img
+                                                                                src={
+                                                                                    item.image
+                                                                                }
+                                                                                alt={
+                                                                                    item.title
+                                                                                }
+                                                                                className="h-16"
+                                                                            />
+                                                                            <div className="flex flex-col h-full justify-between">
+                                                                                <div>
+                                                                                    <p className="text-[.65rem] uppercase">
+                                                                                        {
+                                                                                            item.title
+                                                                                        }{" "}
+                                                                                        -{" "}
+                                                                                        {
+                                                                                            item.size
+                                                                                        }
+                                                                                    </p>
+                                                                                </div>
+                                                                                <p className="text-[.65rem]">
+                                                                                    Price:
+                                                                                    NGN{" "}
+                                                                                    {item.price.toFixed(
+                                                                                        2
+                                                                                    )}
+                                                                                </p>
+                                                                                <p className="text-[.65rem]">
+                                                                                    Qty:{" "}
                                                                                     {
-                                                                                        item.title
-                                                                                    }{" "}
-                                                                                    -{" "}
-                                                                                    {
-                                                                                        item.size
+                                                                                        item.quantity
                                                                                     }
                                                                                 </p>
                                                                             </div>
-                                                                            <p className="text-[.65rem]">
-                                                                                Price:
-                                                                                NGN{" "}
-                                                                                {item.price.toFixed(
-                                                                                    2
-                                                                                )}
-                                                                            </p>
-                                                                            <p className="text-[.65rem]">
-                                                                                Qty:{" "}
-                                                                                {
-                                                                                    item.quantity
-                                                                                }
-                                                                            </p>
                                                                         </div>
-                                                                    </div>
-                                                                    <div className="text-[.65rem] items-end flex justify-between pt-4">
-                                                                        <div>
-                                                                            Total
-                                                                            -{" "}
-                                                                            {"NGN " +
-                                                                                (
-                                                                                    item.price *
-                                                                                    item.quantity
-                                                                                ).toFixed(
-                                                                                    2
-                                                                                )}
+                                                                        <div className="text-[.65rem] items-end flex justify-between pt-4">
+                                                                            <div>
+                                                                                Total
+                                                                                -{" "}
+                                                                                {"NGN " +
+                                                                                    (
+                                                                                        item.price *
+                                                                                        item.quantity
+                                                                                    ).toFixed(
+                                                                                        2
+                                                                                    )}
+                                                                            </div>
                                                                         </div>
+                                                                    </motion.div>
+                                                                )
+                                                            )}
+                                                    </div>
+                                                    <div className="flex justify-end w-full">
+                                                        <AlertDialog>
+                                                            <AlertDialogTrigger className="uppercase w-min text-xs bg-emerald-500 p-3 rounded-none flex items-center justify-center gap-2 hover:text-foreground text-foreground hover:bg-emerald-800 max-sm:text-[.65rem]">
+                                                                <CheckIcon
+                                                                    height={24}
+                                                                    width={24}
+                                                                />
+                                                                Done
+                                                            </AlertDialogTrigger>
+                                                            <AlertDialogContent className="!rounded-none border-0 p-12 gap-12">
+                                                                <AlertDialogHeader className="[&>*]:text-xs">
+                                                                    <AlertDialogTitle>
+                                                                        Done
+                                                                        with
+                                                                        this
+                                                                        order?
+                                                                    </AlertDialogTitle>
+                                                                    <div className="text-xs">
+                                                                        This
+                                                                        will
+                                                                        delete
+                                                                        the
+                                                                        order.
                                                                     </div>
-                                                                </motion.div>
-                                                            )
-                                                        )}
-                                                </div>
-                                                <div className="flex justify-end w-full">
-                                                    <AlertDialog>
-                                                        <AlertDialogTrigger className="uppercase w-min text-xs bg-emerald-500 p-3 rounded-none flex items-center justify-center gap-2 hover:text-foreground text-foreground hover:bg-emerald-800 max-sm:text-[.65rem]">
-                                                            <CheckIcon
-                                                                height={24}
-                                                                width={24}
-                                                            />
-                                                            Done
-                                                        </AlertDialogTrigger>
-                                                        <AlertDialogContent className="!rounded-none border-0 p-12 gap-12">
-                                                            <AlertDialogHeader className="[&>*]:text-xs">
-                                                                <AlertDialogTitle>
-                                                                    Done with
-                                                                    this order?
-                                                                </AlertDialogTitle>
-                                                                <div className="text-xs">
-                                                                    This will
-                                                                    delete the
-                                                                    order.
-                                                                </div>
-                                                            </AlertDialogHeader>
-                                                            <AlertDialogFooter className="[&>*]:text-xs gap-4">
-                                                                <AlertDialogCancel className="uppercase text-xs w-min bg-white border-none rounded-none text-black hover:bg-white/80">
-                                                                    Cancel
-                                                                </AlertDialogCancel>
-                                                                <AlertDialogAction
-                                                                    onClick={async () => {
-                                                                        const response =
-                                                                            await supabase
-                                                                                .from(
-                                                                                    "orders"
-                                                                                )
-                                                                                .delete()
-                                                                                .eq(
-                                                                                    "id",
-                                                                                    order.id
+                                                                </AlertDialogHeader>
+                                                                <AlertDialogFooter className="[&>*]:text-xs gap-4">
+                                                                    <AlertDialogCancel className="uppercase text-xs w-min bg-white border-none rounded-none text-black hover:bg-white/80">
+                                                                        Cancel
+                                                                    </AlertDialogCancel>
+                                                                    <AlertDialogAction
+                                                                        onClick={async () => {
+                                                                            const response =
+                                                                                await supabase
+                                                                                    .from(
+                                                                                        "orders"
+                                                                                    )
+                                                                                    .delete()
+                                                                                    .eq(
+                                                                                        "id",
+                                                                                        order.id
+                                                                                    );
+
+                                                                            if (
+                                                                                response.status ==
+                                                                                204
+                                                                            ) {
+                                                                                toast.success(
+                                                                                    "Order deleted successfully"
                                                                                 );
 
-                                                                        if (
-                                                                            response.status ==
-                                                                            204
-                                                                        ) {
-                                                                            toast.success(
-                                                                                "Order deleted successfully"
-                                                                            );
-
-                                                                            setTimeout(
-                                                                                () =>
-                                                                                    window.location.reload(),
-                                                                                1500
-                                                                            );
-                                                                        }
-                                                                    }}
-                                                                    className="uppercase text-xs w-min text-nowrap bg-white text-emerald-500 border-none rounded-none hover:bg-white/80">
-                                                                    <CheckIcon
-                                                                        height={
-                                                                            24
-                                                                        }
-                                                                        width={
-                                                                            24
-                                                                        }
-                                                                    />
-                                                                    Done
-                                                                </AlertDialogAction>
-                                                            </AlertDialogFooter>
-                                                        </AlertDialogContent>
-                                                    </AlertDialog>
+                                                                                setTimeout(
+                                                                                    () =>
+                                                                                        window.location.reload(),
+                                                                                    1500
+                                                                                );
+                                                                            }
+                                                                        }}
+                                                                        className="uppercase text-xs w-min text-nowrap bg-white text-emerald-500 border-none rounded-none hover:bg-white/80">
+                                                                        <CheckIcon
+                                                                            height={
+                                                                                24
+                                                                            }
+                                                                            width={
+                                                                                24
+                                                                            }
+                                                                        />
+                                                                        Done
+                                                                    </AlertDialogAction>
+                                                                </AlertDialogFooter>
+                                                            </AlertDialogContent>
+                                                        </AlertDialog>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </AccordionContent>
-                                    </AccordionItem>
-                                </Accordion>
-                            ))}
-                    </div>
-                </motion.div>
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                    </Accordion>
+                                ))}
+                        </div>
+                    </motion.div>
+                ) : (
+                    <motion.div
+                        key="loginPage" // Unique key for AnimatePresence
+                        initial={{ opacity: 0 }} // Start invisible
+                        animate={{ opacity: 1 }} // Fade in
+                        exit={{ opacity: 0 }} // Fade out
+                        transition={{ duration: 0.5 }} // Animation duration
+                        className="h-full overflow-y-scroll px-4 flex items-center justify-center">
+                            No orders have been made yet.
+                        </motion.div>
+                )}
             </>
         );
     }
