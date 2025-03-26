@@ -157,7 +157,7 @@ export default function AdminPage() {
             animate={{ opacity: 1 }} // Fade in
             exit={{ opacity: 0 }} // Fade out
             transition={{ duration: 0.5 }} // Animation duration
-            className="outline flex flex-col items-center justify-start gap-8 outline-foreground aspect-square p-4">
+            className="outline flex flex-col items-center justify-start gap-8 outline-foreground aspect-square p-4 w-min">
             <div className="flex flex-col items-center justify-center">
                 <Header onlyBrand={true} />
                 <h1 className="text-center w-64">
@@ -185,7 +185,7 @@ export default function AdminPage() {
                         <ArrowRight />
                     </Button>
                 </div>
-                <div className="text-[.65rem] pt-8">
+                <div className="text-[.65rem] pt-8 text-center">
                     <span className="text-slate-200">
                         You don't want to be the owner?
                     </span>{" "}
