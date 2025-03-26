@@ -539,7 +539,9 @@ export default function ShopItem({
                                                                             ?.value ??
                                                                         "",
                                                                 },
-                                                                async () => {
+                                                                async (
+                                                                    reference
+                                                                ) => {
                                                                     const item =
                                                                         {
                                                                             title: title,
@@ -565,14 +567,18 @@ export default function ShopItem({
                                                                                             item,
                                                                                         ],
                                                                                     customer_data:
-                                                                                        data,
+                                                                                        {
+                                                                                            ...data,
+                                                                                            reference:
+                                                                                                reference,
+                                                                                        },
                                                                                 }
                                                                             );
 
-                                                                            if (error) {
-                                                                                console.error(
-                                                                                    "Error inserting order:",
-                                                                                    error.message
+                                                                    if (error) {
+                                                                        console.error(
+                                                                            "Error inserting order:",
+                                                                            error.message
                                                                         );
                                                                     }
                                                                 }

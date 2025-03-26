@@ -41,6 +41,7 @@ import {
 } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { ShoppingBasket } from "lucide-react";
+import supabase from "@/lib/supabase";
 
 interface CartItem {
     title: string;
@@ -365,9 +366,7 @@ export default function CartDrawer() {
                                         onSubmit={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            setInnerDialogState(false);
-                                            setDrawerState(false);
-                                            payWithPayStack(100 * cartTotal, {
+                                            const data = {
                                                 email:
                                                     customerData.email.current
                                                         ?.value ?? "",
@@ -380,7 +379,35 @@ export default function CartDrawer() {
                                                 tel:
                                                     customerData.tel.current
                                                         ?.value ?? "",
-                                            });
+                                            };
+                                            setInnerDialogState(false);
+                                            setDrawerState(false);
+                                            payWithPayStack(
+                                                100 * cartTotal,
+                                                data,
+                                                async (reference) => {
+                                                    const { error } =
+                                                        await supabase
+                                                            .from("orders")
+                                                            .insert({
+                                                                // @ts-ignore
+                                                                items_ordered:
+                                                                    cartItems,
+                                                                customer_data: {
+                                                                    ...data,
+                                                                    reference:
+                                                                        reference,
+                                                                },
+                                                            });
+
+                                                    if (error) {
+                                                        console.error(
+                                                            "Error inserting order:",
+                                                            error.message
+                                                        );
+                                                    }
+                                                }
+                                            );
                                         }}>
                                         <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-8 w-full [&>div>input]:!text-xs">
                                             <div className="gap-2 flex flex-col">

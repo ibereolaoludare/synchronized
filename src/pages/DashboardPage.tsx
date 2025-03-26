@@ -586,7 +586,7 @@ export default function DashboardPage() {
                                                     }{" "}
                                                     item&#40;s&#41;
                                                 </h2>
-                                                <div className="grid grid-cols-2 max-lg:grid-cols-1 text-xs gap-2 py-4">
+                                                <div className="grid grid-cols-2 max-lg:grid-cols-1 text-xs gap-4 py-4">
                                                     {order.items_ordered &&
                                                         //@ts-ignore
                                                         order.items_ordered.map(

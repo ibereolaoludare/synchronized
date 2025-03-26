@@ -29,7 +29,7 @@ export async function payWithPayStack(
         lastName: string,
         tel: string,
     },
-    callback?: () => void
+    callback?: (arg: string) => void
 ) {
     try {
         const popup = new PaystackPop();
@@ -43,7 +43,7 @@ export async function payWithPayStack(
             amount: amount,
             onSuccess: (transaction) => {
                 if(transaction.status === "success" && callback)
-                    callback()
+                    callback(transaction.reference)
             },
         });
     } catch (error) {
