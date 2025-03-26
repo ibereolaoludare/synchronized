@@ -490,7 +490,6 @@ export default function DashboardPage() {
                     return null;
                 }
 
-                if (orders === data) return data;
                 setOrders(data);
             } catch (error) {
                 console.error("Unexpected error fetching orders:", error);
